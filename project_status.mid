@@ -1,0 +1,59 @@
+# RealmForge — Project Status
+
+## Project Goal
+
+Build a self-hosted digital Dungeons & Dragons campaign platform where the developer can also play as a player character.
+
+## Current Status
+
+- [x] Created the RealmForge project folder
+- [x] Opened the project in VS Code
+- [ ] Verify Git checkpoint
+- [ ] Verify frontend and backend dependencies
+- [ ] Build the first working application
+
+## Confirmed Decisions
+
+- **Project name:** RealmForge
+- **Frontend:** React + TypeScript + Vite
+- **Backend:** Node.js + Express + TypeScript
+- **Initial database:** SQLite
+- **Game system:** D&D 5e (2024 rules)
+- **Dungeon Master:** AI-run with optional manual override
+- **Hosting:** Local server with local-network and remote player access
+- **Budget:** Free-first; avoid paid AI APIs initially
+- **Development workflow:** VS Code and Codex
+- **Development approach:** Small stages, test each stage before continuing
+
+## Planned Roadmap
+
+1. Project foundation and local health-check endpoint
+2. Campaign creation, player profiles, and character sheets
+3. Game state, dice, inventory, and core rules
+4. AI Dungeon Master, NPCs, and persistent campaign memory
+5. Multiplayer sessions and secure remote access
+6. Maps, tokens, tactical combat, and visual assets
+
+## Next Session — Start Here
+
+1. Open `~/Projects/RealmForge` in VS Code.
+2. Open a terminal in the project root.
+3. Run `git status` and confirm the last checkpoint.
+4. Inspect the existing package files and project structure.
+5. Verify dependencies before installing or changing anything.
+6. Build the first working frontend and backend health checks.
+7. Test the application before proceeding to the next stage.
+
+## Important Constraints
+
+- Do not modify unrelated projects.
+- Do not commit secrets, API keys, `.env` files, or `node_modules`.
+- Keep the initial application usable without a paid AI API.
+- Enforce game mechanics and permissions in the backend.
+- Keep developer controls separate from player privileges.
+- Do not expose hidden campaign information to players.
+- Do not enable public remote access until authentication and security are addressed.
+
+## Development Notes
+
+Record completed steps, test results, important decisions, and the exact next action here as development progresses.
