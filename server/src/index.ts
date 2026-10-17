@@ -1,6 +1,10 @@
 import express = require('express')
 import cors = require('cors')
 import campaignRoutes = require('./campaignRoutes')
+import playerCharacterRoutes = require('./playerCharacterRoutes')
+import inventoryRoutes = require('./inventoryRoutes')
+import combatRoutes = require('./combatRoutes')
+import HttpError = require('./httpError')
 
 const app = express()
 const port = Number(process.env.PORT) || 3001
@@ -13,6 +17,9 @@ app.get('/api/health', (_request, response) => {
 })
 
 app.use('/api/campaigns', campaignRoutes)
+app.use('/api/campaigns', playerCharacterRoutes)
+app.use('/api/campaigns', inventoryRoutes)
+app.use('/api/campaigns', combatRoutes)
 
 app.use((_request, response) => {
   response.status(404).json({ error: 'Not found' })
@@ -21,6 +28,11 @@ app.use((_request, response) => {
 app.use(((error: unknown, _request, response, _next) => {
   if (error instanceof SyntaxError && 'status' in error) {
     response.status(400).json({ error: 'Invalid JSON request body' })
+    return
+  }
+
+  if (error instanceof HttpError) {
+    response.status(error.status).json({ error: error.message, ...(error.fields ? { fields: error.fields } : {}), ...(error.details ?? {}) })
     return
   }
 

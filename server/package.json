@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "test": "node --test test/*.test.cjs",
     "build": "tsc -p tsconfig.json",
     "start": "npm run build && node dist/index.js"
   },
