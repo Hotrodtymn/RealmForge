@@ -1,6 +1,10 @@
 import crypto = require('node:crypto')
 import database = require('./database')
 import HttpError = require('./httpError')
+import survivalStore = require('./survivalStore')
+import actionEconomyStore = require('./actionEconomyStore')
+import conditionRules = require('./conditionRules')
+import conditionStore = require('./conditionStore')
 
 namespace combatStore {
   export type EncounterStatus = 'setup' | 'active'
@@ -18,6 +22,20 @@ namespace combatStore {
     combatantId: string
     condition: ConditionKey
     level: number | null
+    sourceCombatantId: string | null
+    notes: string
+    mechanicalSummary: string
+    contextWarning: string | null
+    durationType: conditionStore.DurationType
+    durationCombatantId: string | null
+    durationTiming: conditionStore.Timing | null
+    remainingRounds: number | null
+    originalDuration: string
+    recoveryAbility: conditionStore.RecoveryConfig['ability'] | null
+    recoveryDc: number | null
+    recoveryTiming: conditionStore.Timing | null
+    recoveryNotes: string
+    recoveryModifier: number | null
     createdAt: string
   }
 
@@ -42,11 +60,17 @@ namespace combatStore {
     initiativeSource: InitiativeSource | null
     initiativeRoll: number | null
     initiativeTotal: number | null
+    initiativeExhaustionPenalty: number
     insertionOrder: number
     currentHp: number
     maxHp: number
+    deathSaveSuccesses: number
+    deathSaveFailures: number
+    survivalStatus: 'conscious' | 'unconscious' | 'stable' | 'dead'
     armorClassOverride: number | null
     attackModifier: number | null
+    damageFormula: string | null
+    damageType: string | null
     conditions: CombatantCondition[]
     createdAt: string
     updatedAt: string
@@ -88,7 +112,7 @@ namespace combatStore {
     requireEncounter(campaignId, encounterId)
     const row = database.prepare(`
       SELECT id, encounterId, characterId, type, name, initiativeModifier, initiativeSource,
-        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, armorClassOverride, attackModifier, createdAt, updatedAt
+        initiativeRoll, initiativeTotal, initiativeExhaustionPenalty, insertionOrder, currentHp, maxHp, deathSaveSuccesses, deathSaveFailures, survivalStatus, armorClassOverride, attackModifier, damageFormula, damageType, createdAt, updatedAt
       FROM encounter_combatants WHERE id = ? AND encounterId = ?
     `).get(combatantId, encounterId)
     if (!row) throw new HttpError(404, 'Combatant not found in this encounter.')
@@ -98,12 +122,12 @@ namespace combatStore {
   function getCombatants(encounterId: string): Combatant[] {
     const rows = database.prepare(`
       SELECT id, encounterId, characterId, type, name, initiativeModifier, initiativeSource,
-        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, armorClassOverride, attackModifier, createdAt, updatedAt
+        initiativeRoll, initiativeTotal, initiativeExhaustionPenalty, insertionOrder, currentHp, maxHp, deathSaveSuccesses, deathSaveFailures, survivalStatus, armorClassOverride, attackModifier, damageFormula, damageType, createdAt, updatedAt
       FROM encounter_combatants WHERE encounterId = ?
       ORDER BY initiativeTotal IS NULL ASC, initiativeTotal DESC, insertionOrder ASC
     `).all(encounterId) as unknown as Omit<Combatant, 'conditions'>[]
     const conditionRows = database.prepare(`
-      SELECT id, combatantId, condition, level, createdAt FROM combatant_conditions
+      SELECT * FROM combatant_conditions
       WHERE combatantId IN (SELECT id FROM encounter_combatants WHERE encounterId = ?)
       ORDER BY rowid ASC
     `).all(encounterId) as unknown as CombatantCondition[]
@@ -113,7 +137,7 @@ namespace combatStore {
       entries.push(condition)
       conditionsByCombatant.set(condition.combatantId, entries)
     }
-    return rows.map((row) => ({ ...row, conditions: conditionsByCombatant.get(row.id) ?? [] }))
+    return rows.map((row) => ({ ...row, conditions: (conditionsByCombatant.get(row.id) ?? []).map((entry) => ({ ...entry, mechanicalSummary: entry.condition === 'exhaustion' ? `Level ${entry.level}: ${Math.abs(conditionRules.exhaustionPenalty(Number(entry.level)))} penalty to D20 Tests and ${Number(entry.level) * 5} feet less Speed; level 6 causes death.` : conditionRules.summary(entry.condition), contextWarning: conditionRules.contextWarning(entry.condition, entry.sourceCombatantId) })) }))
   }
 
   function details(campaignId: string, encounterId: string): EncounterDetails {
@@ -130,18 +154,21 @@ namespace combatStore {
     encounterId: string, type: CombatantType, name: string, characterId: string | null, initiativeModifier: number,
     currentHp: number, maxHp: number,
     armorClassOverride: number | null = null, attackModifier: number | null = null,
+    damageFormula: string | null = null, damageType: string | null = null,
   ): Combatant {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
     database.prepare(`
       INSERT INTO encounter_combatants (
         id, encounterId, characterId, type, name, initiativeModifier, initiativeSource,
-        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, armorClassOverride, attackModifier, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, encounterId, characterId, type, name, initiativeModifier, nextInsertionOrder(encounterId), currentHp, maxHp, armorClassOverride, attackModifier, now, now)
+        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, deathSaveSuccesses, deathSaveFailures, survivalStatus, armorClassOverride, attackModifier, damageFormula, damageType, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?, 0, 0, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, encounterId, characterId, type, name, initiativeModifier, nextInsertionOrder(encounterId), currentHp, maxHp, currentHp === 0 && type === 'player' ? 'unconscious' : 'conscious', armorClassOverride, attackModifier, damageFormula, damageType, now, now)
+    database.prepare('INSERT OR IGNORE INTO encounter_action_state(combatantId) VALUES (?)').run(id)
+    if (currentHp === 0 && type === 'player') database.prepare("INSERT OR IGNORE INTO combatant_conditions (id,combatantId,condition,level,createdAt) VALUES (?,?, 'unconscious',NULL,?)").run(crypto.randomUUID(), id, now)
     return database.prepare(`
       SELECT id, encounterId, characterId, type, name, initiativeModifier, initiativeSource,
-        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, armorClassOverride, attackModifier, createdAt, updatedAt
+        initiativeRoll, initiativeTotal, insertionOrder, currentHp, maxHp, deathSaveSuccesses, deathSaveFailures, survivalStatus, armorClassOverride, attackModifier, damageFormula, damageType, createdAt, updatedAt
       FROM encounter_combatants WHERE id = ?
     `).get(id) as unknown as Omit<Combatant, 'conditions'> as Combatant
   }
@@ -205,20 +232,20 @@ namespace combatStore {
     })
   }
 
-  export function addEnemy(campaignId: string, encounterId: string, name: string, initiativeModifier: number, currentHp: number, maxHp: number, armorClassOverride: number | null = null, attackModifier: number | null = null): EncounterDetails {
+  export function addEnemy(campaignId: string, encounterId: string, name: string, initiativeModifier: number, currentHp: number, maxHp: number, armorClassOverride: number | null = null, attackModifier: number | null = null, damageFormula: string | null = null, damageType: string | null = null): EncounterDetails {
     return transaction(() => {
       requireEncounter(campaignId, encounterId)
-      insertCombatant(encounterId, 'enemy', name, null, initiativeModifier, currentHp, maxHp, armorClassOverride, attackModifier)
+      insertCombatant(encounterId, 'enemy', name, null, initiativeModifier, currentHp, maxHp, armorClassOverride, attackModifier, damageFormula, damageType)
       return details(campaignId, encounterId)
     })
   }
 
-  export function setEnemyCombatStats(campaignId: string, encounterId: string, combatantId: string, armorClassOverride: number | null, attackModifier: number | null): EncounterDetails {
+  export function setEnemyCombatStats(campaignId: string, encounterId: string, combatantId: string, armorClassOverride: number | null, attackModifier: number | null, damageFormula: string | null, damageType: string | null): EncounterDetails {
     return transaction(() => {
       const combatant = requireCombatant(campaignId, encounterId, combatantId)
       if (combatant.type !== 'enemy') throw new HttpError(400, 'Manual AC and attack bonuses can only be set for enemy combatants.')
-      database.prepare('UPDATE encounter_combatants SET armorClassOverride = ?, attackModifier = ?, updatedAt = ? WHERE id = ? AND encounterId = ?')
-        .run(armorClassOverride, attackModifier, new Date().toISOString(), combatantId, encounterId)
+      database.prepare('UPDATE encounter_combatants SET armorClassOverride = ?, attackModifier = ?, damageFormula = ?, damageType = ?, updatedAt = ? WHERE id = ? AND encounterId = ?')
+        .run(armorClassOverride, attackModifier, damageFormula, damageType, new Date().toISOString(), combatantId, encounterId)
       return details(campaignId, encounterId)
     })
   }
@@ -226,45 +253,29 @@ namespace combatStore {
   export function setHitPoints(campaignId: string, encounterId: string, combatantId: string, currentHp: number, maxHp: number): EncounterDetails {
     return transaction(() => {
       requireCombatant(campaignId, encounterId, combatantId)
-      database.prepare('UPDATE encounter_combatants SET currentHp = ?, maxHp = ?, updatedAt = ? WHERE id = ? AND encounterId = ?')
-        .run(currentHp, maxHp, new Date().toISOString(), combatantId, encounterId)
+      survivalStore.setHitPoints(campaignId, encounterId, combatantId, currentHp, maxHp)
       return details(campaignId, encounterId)
     })
   }
 
   export function adjustHitPoints(campaignId: string, encounterId: string, combatantId: string, amount: number, action: 'damage' | 'heal'): EncounterDetails {
     return transaction(() => {
-      const combatant = requireCombatant(campaignId, encounterId, combatantId)
-      const currentHp = action === 'damage'
-        ? Math.max(0, combatant.currentHp - amount)
-        : Math.min(combatant.maxHp, combatant.currentHp + amount)
-      database.prepare('UPDATE encounter_combatants SET currentHp = ?, updatedAt = ? WHERE id = ? AND encounterId = ?')
-        .run(currentHp, new Date().toISOString(), combatantId, encounterId)
+      requireCombatant(campaignId, encounterId, combatantId)
+      survivalStore.adjustHp(campaignId, encounterId, combatantId, amount, action)
       return details(campaignId, encounterId)
     })
   }
 
-  export function addCondition(campaignId: string, encounterId: string, combatantId: string, condition: ConditionKey, level?: number): EncounterDetails {
+  export function addCondition(campaignId: string, encounterId: string, combatantId: string, condition: ConditionKey, level?: number, sourceCombatantId: string | null = null, notes = ''): EncounterDetails {
     return transaction(() => {
-      requireCombatant(campaignId, encounterId, combatantId)
-      const existing = database.prepare('SELECT id FROM combatant_conditions WHERE combatantId = ? AND condition = ?').get(combatantId, condition) as { id: string } | undefined
-      if (condition === 'exhaustion' && existing) {
-        database.prepare('UPDATE combatant_conditions SET level = ? WHERE id = ? AND combatantId = ?').run(level!, existing.id, combatantId)
-      } else if (existing) {
-        throw new HttpError(409, `${condition} is already applied to this combatant.`)
-      } else {
-        database.prepare('INSERT INTO combatant_conditions (id, combatantId, condition, level, createdAt) VALUES (?, ?, ?, ?, ?)')
-          .run(crypto.randomUUID(), combatantId, condition, condition === 'exhaustion' ? level! : null, new Date().toISOString())
-      }
+      conditionStore.apply(campaignId, encounterId, combatantId, condition, level, sourceCombatantId, notes)
       return details(campaignId, encounterId)
     })
   }
 
-  export function removeCondition(campaignId: string, encounterId: string, combatantId: string, condition: ConditionKey): EncounterDetails {
+  export function removeCondition(campaignId: string, encounterId: string, combatantId: string, condition: ConditionKey, reason = ''): EncounterDetails {
     return transaction(() => {
-      requireCombatant(campaignId, encounterId, combatantId)
-      const result = database.prepare('DELETE FROM combatant_conditions WHERE combatantId = ? AND condition = ?').run(combatantId, condition)
-      if (result.changes === 0) throw new HttpError(404, `${condition} is not applied to this combatant.`)
+      conditionStore.remove(campaignId, encounterId, combatantId, condition, condition === 'exhaustion', reason)
       return details(campaignId, encounterId)
     })
   }
@@ -285,11 +296,13 @@ namespace combatStore {
   export function setRolledInitiative(campaignId: string, encounterId: string, combatantId: string, roll: number): EncounterDetails {
     return transaction(() => {
       const combatant = requireCombatant(campaignId, encounterId, combatantId)
-      const total = roll + combatant.initiativeModifier
+      const exhaustion = Number((database.prepare("SELECT level FROM combatant_conditions WHERE combatantId=? AND condition='exhaustion'").get(combatantId) as { level: number } | undefined)?.level ?? 0)
+      const exhaustionPenalty = conditionRules.exhaustionPenalty(exhaustion)
+      const total = roll + combatant.initiativeModifier + exhaustionPenalty
       database.prepare(`
-        UPDATE encounter_combatants SET initiativeSource = 'rolled', initiativeRoll = ?, initiativeTotal = ?, updatedAt = ?
+        UPDATE encounter_combatants SET initiativeSource = 'rolled', initiativeRoll = ?, initiativeTotal = ?, initiativeExhaustionPenalty = ?, updatedAt = ?
         WHERE id = ? AND encounterId = ?
-      `).run(roll, total, new Date().toISOString(), combatantId, encounterId)
+      `).run(roll, total, exhaustionPenalty, new Date().toISOString(), combatantId, encounterId)
       database.prepare('UPDATE encounters SET updatedAt = ? WHERE id = ?').run(new Date().toISOString(), encounterId)
       return details(campaignId, encounterId)
     })
@@ -299,7 +312,7 @@ namespace combatStore {
     return transaction(() => {
       requireCombatant(campaignId, encounterId, combatantId)
       database.prepare(`
-        UPDATE encounter_combatants SET initiativeSource = 'manual', initiativeRoll = NULL, initiativeTotal = ?, updatedAt = ?
+        UPDATE encounter_combatants SET initiativeSource = 'manual', initiativeRoll = NULL, initiativeTotal = ?, initiativeExhaustionPenalty = 0, updatedAt = ?
         WHERE id = ? AND encounterId = ?
       `).run(total, new Date().toISOString(), combatantId, encounterId)
       database.prepare('UPDATE encounters SET updatedAt = ? WHERE id = ?').run(new Date().toISOString(), encounterId)
@@ -318,22 +331,37 @@ namespace combatStore {
       }
       database.prepare(`UPDATE encounters SET status = 'active', round = 1, activeCombatantId = ?, updatedAt = ? WHERE id = ?`)
         .run(combatants[0]!.id, new Date().toISOString(), encounterId)
+      actionEconomyStore.turnStart(encounterId, combatants[0]!.id)
+      conditionStore.processBoundary(encounterId, combatants[0]!.id, 'start', 1)
       return details(campaignId, encounterId)
     })
   }
 
-  export function nextTurn(campaignId: string, encounterId: string): EncounterDetails {
+  export function nextTurn(campaignId: string, encounterId: string, actionId?: string): EncounterDetails {
     return transaction(() => {
       const encounter = requireEncounter(campaignId, encounterId)
+      if (actionId) {
+        const duplicate = database.prepare('SELECT encounterId,result FROM encounter_turn_transitions WHERE actionId=?').get(actionId) as { encounterId: string; result: string } | undefined
+        if (duplicate && duplicate.encounterId !== encounterId) throw new HttpError(409, 'This turn action ID was already used for another encounter.')
+        if (duplicate) return JSON.parse(duplicate.result) as EncounterDetails
+      }
       if (encounter.status !== 'active') throw new HttpError(409, 'Start the encounter before advancing turns.')
       const combatants = getCombatants(encounterId).filter((combatant) => combatant.initiativeTotal !== null)
       if (combatants.length === 0) throw new HttpError(409, 'No combatants have initiative. Set initiative and restart the encounter.')
       const currentIndex = combatants.findIndex((combatant) => combatant.id === encounter.activeCombatantId)
       const wrapped = currentIndex === combatants.length - 1
       const next = currentIndex === -1 ? combatants[0]! : combatants[(currentIndex + 1) % combatants.length]!
+      if (encounter.activeCombatantId) {
+        actionEconomyStore.turnEnd(encounterId, encounter.activeCombatantId)
+        conditionStore.processBoundary(encounterId, encounter.activeCombatantId, 'end', encounter.round)
+      }
+      actionEconomyStore.turnStart(encounterId, next.id)
       database.prepare('UPDATE encounters SET round = ?, activeCombatantId = ?, updatedAt = ? WHERE id = ?')
         .run(wrapped ? encounter.round + 1 : encounter.round, next.id, new Date().toISOString(), encounterId)
-      return details(campaignId, encounterId)
+      conditionStore.processBoundary(encounterId, next.id, 'start', wrapped ? encounter.round + 1 : encounter.round)
+      const result = details(campaignId, encounterId)
+      if (actionId) database.prepare('INSERT INTO encounter_turn_transitions(actionId,encounterId,result,createdAt) VALUES(?,?,?,?)').run(actionId, encounterId, JSON.stringify(result), new Date().toISOString())
+      return result
     })
   }
 
@@ -342,6 +370,8 @@ namespace combatStore {
       requireEncounter(campaignId, encounterId)
       database.prepare(`UPDATE encounters SET status = 'setup', round = 0, activeCombatantId = NULL, updatedAt = ? WHERE id = ?`)
         .run(new Date().toISOString(), encounterId)
+      database.prepare(`UPDATE encounter_action_state SET actionUsed=0,bonusActionUsed=0,reactionUsed=0,movementUsed=0,dashBonusMovement=0,disengageActive=0,dodgeActive=0 WHERE combatantId IN (SELECT id FROM encounter_combatants WHERE encounterId=?)`).run(encounterId)
+      database.prepare(`UPDATE encounter_action_effects SET status='expired',resolvedAt=? WHERE encounterId=? AND status='active'`).run(new Date().toISOString(),encounterId)
       return details(campaignId, encounterId)
     })
   }

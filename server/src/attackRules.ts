@@ -24,6 +24,7 @@ export function resolveAttack(
   mode: AttackMode,
   situationalModifier: number,
   rollD20: () => number = () => crypto.randomInt(1, 21),
+  criticalOnHit = false,
 ): AttackResolution {
   if (!Number.isSafeInteger(attackBonus) || attackBonus < -100 || attackBonus > 100) throw new HttpError(400, 'Attack bonus is outside the supported range.')
   if (!Number.isSafeInteger(targetAC) || targetAC < 1 || targetAC > 50) throw new HttpError(400, 'Target AC must be a whole number from 1 to 50.')
@@ -38,7 +39,7 @@ export function resolveAttack(
   if (mode === 'disadvantage' && diceResults[1]! < diceResults[0]!) keptIndex = 1
   const natural = diceResults[keptIndex]!
   const total = natural + attackBonus + situationalModifier
-  const outcome: AttackOutcome = natural === 20 ? 'critical_hit' : natural === 1 ? 'miss' : total >= targetAC ? 'hit' : 'miss'
+  const outcome: AttackOutcome = natural === 20 ? 'critical_hit' : natural === 1 ? 'miss' : total >= targetAC ? criticalOnHit ? 'critical_hit' : 'hit' : 'miss'
   const isCritical = outcome === 'critical_hit'
   const breakdown = `d20 (${diceResults.map((die, index) => `${die}${index === keptIndex ? ' kept' : ''}`).join(' / ')}) ${attackBonus < 0 ? '−' : '+'} ${Math.abs(attackBonus)} attack bonus ${situationalModifier === 0 ? '' : `${situationalModifier < 0 ? '−' : '+'} ${Math.abs(situationalModifier)} situational modifier `}= ${total}`.trim()
   return { mode, diceResults, keptIndex, attackBonus, situationalModifier, total, targetAC, outcome, isCritical, breakdown }

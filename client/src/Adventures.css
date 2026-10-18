@@ -1,0 +1,174 @@
+.adventures-page { min-width: 0; padding: 36px 0 48px; color: #d8d2c4; }
+.adventure-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 18px 0 22px; }
+.adventure-heading h1 { margin: 0 0 8px; }
+.adventure-heading p { color: #929184; font-size: 12px; line-height: 1.65; }
+.adventure-campaign-select { display: grid; gap: 7px; max-width: 420px; margin-bottom: 18px; color: #bcb8aa; font-size: 10px; }
+.adventure-campaign-select select, .adventure-detail-actions select, .adventure-field input, .adventure-field textarea, .adventure-field select, .connection-controls select, .objective-add input { width: 100%; min-width: 0; padding: 10px 11px; border: 1px solid rgba(224,210,174,.15); border-radius: 3px; outline: none; color: #e5e0d5; background: #11120f; font: inherit; font-size: 11px; }
+.adventure-campaign-select select:focus, .adventure-detail-actions select:focus, .adventure-field input:focus, .adventure-field textarea:focus, .adventure-field select:focus, .connection-controls select:focus, .objective-add input:focus { border-color: rgba(201,164,94,.6); }
+.adventure-feedback { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0; padding: 10px 12px; border: 1px solid rgba(201,164,94,.2); border-radius: 3px; font-size: 11px; }
+.adventure-feedback.error { color: #d49b8f; background: rgba(184,108,96,.055); border-color: rgba(184,108,96,.24); }
+.adventure-feedback.success { color: #a3c0a0; background: rgba(115,167,126,.055); }
+.adventure-link-button { padding: 4px 6px; border: 0; color: #c9b780; background: transparent; font: inherit; font-size: 10px; cursor: pointer; }
+.adventure-link-button:hover { color: #f0d68e; text-decoration: underline; }
+.adventure-layout { display: grid; grid-template-columns: minmax(200px, 255px) minmax(0, 1fr); align-items: start; gap: 16px; }
+.adventure-list-panel, .adventure-detail, .adventure-editor { min-width: 0; border: 1px solid rgba(224,210,174,.11); border-radius: 5px; background: #151611; }
+.adventure-list-panel { overflow: hidden; }
+.adventure-list-title { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(224,210,174,.08); }
+.adventure-list-title h2 { margin: 0; font-size: 15px; }
+.adventure-list-title span { color: #bca56e; font-size: 10px; }
+.adventure-list { display: grid; gap: 2px; padding: 7px; }
+.adventure-list-item { display: grid; gap: 5px; width: 100%; padding: 11px; border: 1px solid transparent; border-radius: 3px; text-align: left; color: #c7c2b5; background: transparent; cursor: pointer; }
+.adventure-list-item:hover, .adventure-list-item.selected { border-color: rgba(201,164,94,.2); background: rgba(201,164,94,.075); }
+.adventure-list-item strong { font-family: var(--serif); font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+.adventure-list-item span { color: #89897f; font-size: 9px; text-transform: capitalize; }
+.adventure-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #99978b; text-align: center; }
+.adventure-empty.small { min-height: 170px; padding: 20px; font-size: 11px; }
+.adventure-empty.small > span { color: #b39a63; font-size: 24px; }
+.adventure-empty.small strong { color: #d8d2c4; font-family: var(--serif); font-size: 14px; font-weight: 500; }
+.adventure-empty.small p { max-width: 200px; color: #89897f; font-size: 10px; line-height: 1.6; }
+.adventure-empty.large { min-height: 320px; padding: 26px; font-size: 12px; }
+.adventure-detail { padding: 18px; }
+.adventure-detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 3px 1px 17px; border-bottom: 1px solid rgba(224,210,174,.09); }
+.adventure-detail-header > div:first-child { min-width: 0; }
+.adventure-detail-header small, .adventure-editor-title small, .adventure-section-title small { color: #a59163; font-size: 8px; font-weight: 700; letter-spacing: .15em; }
+.adventure-detail-header h2 { margin: 6px 0; color: #e2ddd1; font-size: 22px; overflow-wrap: anywhere; }
+.adventure-detail-header p { color: #98968a; font-size: 11px; line-height: 1.7; }
+.adventure-starting { display: inline-block; margin-top: 9px; color: #b8a36f; font-size: 9px; }
+.adventure-detail-actions { display: grid; justify-items: end; gap: 7px; flex: 0 0 auto; }
+.adventure-detail-actions select { width: auto; min-width: 120px; text-transform: capitalize; }
+.adventure-content-section { padding: 17px 0; border-bottom: 1px solid rgba(224,210,174,.075); }
+.adventure-content-section:last-child { border-bottom: 0; }
+.adventure-section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.adventure-section-title h3 { margin: 4px 0 0; font-size: 16px; }
+.adventure-section-title > .text-button, .story-actions .text-button { flex: 0 0 auto; }
+.adventure-record-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.adventure-record { min-width: 0; padding: 12px; border: 1px solid rgba(224,210,174,.085); border-radius: 3px; background: rgba(8,9,7,.2); }
+.record-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 9px; }
+.record-heading > div { min-width: 0; display: grid; gap: 4px; }
+.record-heading strong { color: #ddd5c3; font-family: var(--serif); font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+.record-heading span, .adventure-record > small { color: #a28e5d; font-size: 9px; text-transform: capitalize; }
+.adventure-record > p, .dm-note p { margin: 8px 0; color: #929084; font-size: 10px; line-height: 1.65; overflow-wrap: anywhere; }
+.adventure-record > p b { color: #c0b38f; font-weight: 500; }
+.dm-note { margin-top: 10px; padding: 8px; border-left: 2px solid rgba(201,164,94,.42); background: rgba(201,164,94,.055); }
+.dm-note b { color: #c6ab70; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+.dm-note p { margin: 4px 0 0; }
+.adventure-empty-inline { margin: 0; padding: 13px; color: #818177; border: 1px dashed rgba(224,210,174,.1); border-radius: 3px; font-size: 10px; }
+.connection-controls { display: flex; align-items: center; gap: 8px; margin-top: 11px; color: #a99a75; font-size: 9px; }
+.connection-controls select { flex: 1; padding: 8px; }
+.objective-list { display: grid; gap: 7px; padding: 0; margin: 12px 0; list-style: none; }
+.objective-list label { display: flex; align-items: flex-start; gap: 8px; color: #aaa79b; font-size: 10px; line-height: 1.5; cursor: pointer; }
+.objective-list input { accent-color: #c2a365; }
+.objective-list .completed { color: #77776d; text-decoration: line-through; }
+.objective-add { display: flex; align-items: center; gap: 7px; }
+.objective-add input { padding: 7px 8px; }
+.story-actions { display: flex; gap: 4px; }
+.story-state-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.story-state-grid h4 { margin: 0 0 9px; color: #c4b58e; font-family: var(--serif); font-size: 12px; font-weight: 500; }
+.flag-list, .story-note-list { display: grid; gap: 7px; padding: 0; margin: 0; list-style: none; }
+.flag-list li { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 8px; padding: 7px; border: 1px solid rgba(224,210,174,.07); background: rgba(8,9,7,.17); }
+.flag-list code { color: #cbb77e; font-size: 9px; overflow-wrap: anywhere; }
+.flag-list span { color: #a4a194; font-size: 9px; overflow-wrap: anywhere; }
+.story-note-list li { padding: 8px; border-left: 2px solid rgba(201,164,94,.28); background: rgba(8,9,7,.17); }
+.story-note-list p { margin: 0 0 5px; color: #aaa79b; font-size: 10px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.story-note-list small { color: #79796e; font-size: 8px; }
+.adventure-editor { margin: 0 0 16px; padding: 16px; }
+.adventure-editor-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+.adventure-editor-title h2 { margin: 5px 0 0; text-transform: capitalize; font-size: 17px; }
+.adventure-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
+.adventure-field { display: grid; align-content: start; gap: 6px; min-width: 0; color: #bcb8aa; font-size: 10px; }
+.adventure-field:has(textarea) { grid-column: span 2; }
+.adventure-field textarea { resize: vertical; }
+.adventure-field input, .adventure-field textarea, .adventure-field select { font-size: 11px; }
+.adventure-editor-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 13px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.session-workspace { margin: 16px -2px 0; padding: 18px 2px 0; border-top: 1px solid rgba(224,210,174,.12); }
+.session-section-heading { margin-bottom: 13px; }
+.session-count { color: #89897f; font-size: 9px; }
+.session-start-panel { display: grid; grid-template-columns: minmax(150px,.65fr) minmax(0,1.8fr); gap: 14px; padding: 13px; border: 1px solid rgba(224,210,174,.09); border-radius: 4px; background: rgba(8,9,7,.18); }
+.session-start-panel h4, .session-list h4, .session-history-section h5, .session-journal-section h5 { margin: 0 0 7px; color: #d5c9a7; font-family: var(--serif); font-size: 13px; font-weight: 500; }
+.session-start-panel > div > p { color: #858479; font-size: 9px; line-height: 1.6; }
+.session-start-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.session-start-form .adventure-field { font-size: 9px; }
+.session-start-form .adventure-field input, .session-start-form .adventure-field select, .session-start-form .adventure-field textarea { padding: 8px; font-size: 10px; }
+.session-wide { grid-column: 1 / -1; }
+.session-form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+.session-browser { display: grid; grid-template-columns: minmax(155px,.55fr) minmax(0,1.8fr); gap: 11px; margin-top: 12px; align-items: start; }
+.session-list, .session-detail, .session-empty-detail { min-width: 0; padding: 12px; border: 1px solid rgba(224,210,174,.09); border-radius: 4px; background: rgba(8,9,7,.16); }
+.session-list h4 { margin-bottom: 10px; }
+.session-list-item { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px 8px; width: 100%; padding: 9px; margin-bottom: 5px; border: 1px solid transparent; border-radius: 3px; text-align: left; color: #c7c2b5; background: transparent; cursor: pointer; }
+.session-list-item:hover, .session-list-item.selected { border-color: rgba(201,164,94,.23); background: rgba(201,164,94,.07); }
+.session-list-item strong { min-width: 0; font-family: var(--serif); font-size: 10px; font-weight: 500; overflow-wrap: anywhere; }
+.session-list-item small { grid-column: 1 / -1; color: #77776d; font-size: 8px; }
+.session-status { align-self: center; color: #bea873; font-size: 8px; text-transform: capitalize; }
+.session-status.paused { color: #d4aa71; }.session-status.completed { color: #8d9d81; }
+.session-detail { padding: 13px; }
+.session-detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(224,210,174,.08); }
+.session-detail-header > div:first-child { min-width: 0; }
+.session-detail-header small { color: #aa9663; font-size: 8px; letter-spacing: .12em; }
+.session-detail-header h4 { margin: 5px 0; color: #e2ddd1; font-family: var(--serif); font-size: 16px; font-weight: 500; }
+.session-detail-header p { color: #818177; font-size: 8px; line-height: 1.5; }
+.session-lifecycle-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 3px; }
+.session-complete { color: #d49b8f; }
+.current-scene-card { margin: 11px 0; padding: 12px; border: 1px solid rgba(201,164,94,.2); border-radius: 3px; background: radial-gradient(ellipse at 0 0,rgba(183,147,77,.1),transparent 75%),#151611; }
+.current-scene-kicker { display: flex; justify-content: space-between; gap: 8px; color: #b19b67; font-size: 8px; letter-spacing: .1em; }
+.current-scene-card h5 { margin: 9px 0 5px; color: #e2ddd1; font-family: var(--serif); font-size: 17px; font-weight: 500; overflow-wrap: anywhere; }
+.current-scene-card p { color: #9b998d; font-size: 10px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.scene-location { margin-top: 8px; color: #c2a96f; font-size: 9px; }
+.session-action-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.session-action-card { display: grid; align-content: start; gap: 9px; min-width: 0; padding: 11px; border: 1px solid rgba(224,210,174,.08); border-radius: 3px; }
+.session-action-card h5 { margin: 0; color: #d2c39f; font-family: var(--serif); font-size: 12px; font-weight: 500; }
+.session-action-card .adventure-field { font-size: 9px; }
+.session-action-card .adventure-field input, .session-action-card .adventure-field textarea, .session-action-card .adventure-field select { padding: 8px; font-size: 10px; }
+.session-action-card > .section-create-button { justify-self: start; margin-top: 2px; }
+.session-check { display: flex; align-items: center; gap: 7px; color: #b7aa88; font-size: 9px; cursor: pointer; }
+.session-check input { accent-color: #c2a365; }
+.session-paused-message { padding: 9px; border: 1px solid rgba(201,164,94,.15); color: #c7b477; background: rgba(201,164,94,.05); font-size: 9px; }
+.session-history-section, .session-journal-section { margin-top: 13px; padding-top: 11px; border-top: 1px solid rgba(224,210,174,.08); }
+.session-history-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.session-scene-history, .session-decision-history, .session-journal-section ol { display: grid; gap: 6px; padding: 0; margin: 0; list-style: none; }
+.session-scene-history li, .session-decision-history li, .session-journal-section li { display: flex; align-items: flex-start; gap: 8px; padding: 8px; border: 1px solid rgba(224,210,174,.065); background: rgba(9,10,8,.22); }
+.session-scene-history li.current { border-color: rgba(201,164,94,.28); background: rgba(201,164,94,.055); }
+.scene-sequence, .journal-sequence { flex: 0 0 20px; display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid rgba(201,164,94,.22); border-radius: 50%; color: #d0b679; font-size: 8px; }
+.session-scene-history li > div, .session-decision-history li, .session-journal-section li > div { min-width: 0; }
+.session-scene-history strong, .session-decision-history strong, .session-journal-section li strong { display: block; color: #cfc8b6; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+.session-scene-history small, .session-decision-history small, .session-journal-section li small { display: block; margin-top: 3px; color: #8d886f; font-size: 8px; }
+.session-scene-history p, .session-journal-section li p { margin: 4px 0 0; color: #8c8b80; font-size: 8px; line-height: 1.5; overflow-wrap: anywhere; }
+.session-decision-history li { display: grid; gap: 2px; }
+.session-decision-history span { color: #ad9963; font-size: 8px; }
+.session-journal-section ol { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.session-empty-detail { display: grid; min-height: 180px; place-items: center; color: #8e8c80; text-align: center; font-size: 10px; }
+
+@media (max-width: 850px) {
+  .adventure-layout { grid-template-columns: minmax(170px,220px) minmax(0,1fr); gap: 11px; }
+  .adventure-detail { padding: 14px; }
+  .adventure-record-grid { grid-template-columns: minmax(0,1fr); }
+  .story-state-grid { grid-template-columns: minmax(0,1fr); }
+  .session-start-panel { grid-template-columns: minmax(0,1fr); }
+  .session-browser { grid-template-columns: minmax(0,1fr); }
+  .session-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; }
+  .session-list h4 { grid-column: 1 / -1; }
+  .session-list > .adventure-empty-inline { grid-column: 1 / -1; }
+}
+@media (max-width: 620px) {
+  .adventures-page { padding-top: 25px; }
+  .adventure-heading { align-items: flex-start; flex-direction: column; }
+  .adventure-layout { grid-template-columns: minmax(0,1fr); }
+  .adventure-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .adventure-list-item { min-width: 0; }
+  .adventure-detail-header { flex-direction: column; }
+  .adventure-detail-actions { display: flex; justify-items: start; align-items: center; flex-wrap: wrap; }
+  .adventure-form-grid { grid-template-columns: minmax(0,1fr); }
+  .adventure-field:has(textarea) { grid-column: auto; }
+  .connection-controls { align-items: stretch; flex-direction: column; }
+  .connection-controls > span[aria-hidden="true"] { display: none; }
+  .story-actions { align-items: flex-end; flex-direction: column; }
+  .flag-list li { grid-template-columns: minmax(0,1fr) auto; }
+  .flag-list li span { grid-column: 1; }
+  .flag-list li button { grid-column: 2; grid-row: 1 / span 2; }
+  .session-start-form, .session-action-grid, .session-history-columns, .session-journal-section ol { grid-template-columns: minmax(0,1fr); }
+  .session-wide, .session-form-actions { grid-column: auto; }
+  .session-list { grid-template-columns: minmax(0,1fr); }
+  .session-list h4 { grid-column: auto; }
+  .session-detail-header { flex-direction: column; }
+  .session-lifecycle-actions { justify-content: flex-start; }
+}

@@ -18,19 +18,19 @@ export const ARMOR_DEFINITIONS = [
 export type ArmorDefinitionId = (typeof ARMOR_DEFINITIONS)[number]['id']
 
 export const WEAPON_DEFINITIONS = [
-  { id: 'club', name: 'Club', attackAbility: 'str', finesse: false },
-  { id: 'dagger', name: 'Dagger', attackAbility: 'str', finesse: true },
-  { id: 'handaxe', name: 'Handaxe', attackAbility: 'str', finesse: false },
-  { id: 'mace', name: 'Mace', attackAbility: 'str', finesse: false },
-  { id: 'quarterstaff', name: 'Quarterstaff', attackAbility: 'str', finesse: false },
-  { id: 'spear', name: 'Spear', attackAbility: 'str', finesse: false },
-  { id: 'shortsword', name: 'Shortsword', attackAbility: 'str', finesse: true },
-  { id: 'longsword', name: 'Longsword', attackAbility: 'str', finesse: false },
-  { id: 'rapier', name: 'Rapier', attackAbility: 'str', finesse: true },
-  { id: 'greatsword', name: 'Greatsword', attackAbility: 'str', finesse: false },
-  { id: 'shortbow', name: 'Shortbow', attackAbility: 'dex', finesse: false },
-  { id: 'longbow', name: 'Longbow', attackAbility: 'dex', finesse: false },
-  { id: 'light_crossbow', name: 'Light Crossbow', attackAbility: 'dex', finesse: false },
+  { id: 'club', name: 'Club', attackAbility: 'str', finesse: false, damage: '1d4 bludgeoning' },
+  { id: 'dagger', name: 'Dagger', attackAbility: 'str', finesse: true, damage: '1d4 piercing', thrown: true },
+  { id: 'handaxe', name: 'Handaxe', attackAbility: 'str', finesse: false, damage: '1d6 slashing', thrown: true },
+  { id: 'mace', name: 'Mace', attackAbility: 'str', finesse: false, damage: '1d6 bludgeoning' },
+  { id: 'quarterstaff', name: 'Quarterstaff', attackAbility: 'str', finesse: false, damage: '1d6 bludgeoning', versatile: '1d8' },
+  { id: 'spear', name: 'Spear', attackAbility: 'str', finesse: false, damage: '1d6 piercing', versatile: '1d8', thrown: true },
+  { id: 'shortsword', name: 'Shortsword', attackAbility: 'str', finesse: true, damage: '1d6 piercing' },
+  { id: 'longsword', name: 'Longsword', attackAbility: 'str', finesse: false, damage: '1d8 slashing', versatile: '1d10' },
+  { id: 'rapier', name: 'Rapier', attackAbility: 'str', finesse: true, damage: '1d8 piercing' },
+  { id: 'greatsword', name: 'Greatsword', attackAbility: 'str', finesse: false, damage: '2d6 slashing' },
+  { id: 'shortbow', name: 'Shortbow', attackAbility: 'dex', finesse: false, damage: '1d6 piercing', ranged: true },
+  { id: 'longbow', name: 'Longbow', attackAbility: 'dex', finesse: false, damage: '1d8 piercing', ranged: true },
+  { id: 'light_crossbow', name: 'Light Crossbow', attackAbility: 'dex', finesse: false, damage: '1d8 piercing', ranged: true },
 ] as const
 
 export type WeaponDefinitionId = (typeof WEAPON_DEFINITIONS)[number]['id']
