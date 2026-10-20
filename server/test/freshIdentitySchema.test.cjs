@@ -1,0 +1,26 @@
+const { spawnSync } = require('node:child_process')
+const fs = require('node:fs')
+const os = require('node:os')
+const path = require('node:path')
+const { DatabaseSync } = require('node:sqlite')
+const test = require('node:test')
+const assert = require('node:assert/strict')
+
+test('fresh database initialization creates identity, ownership, and journal schema safely', (t) => {
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'realmforge-fresh-identity-'))
+  t.after(() => fs.rmSync(dataDir, { recursive: true, force: true }))
+  const loader = require.resolve('tsx/cjs')
+  const initialized = spawnSync(process.execPath, ['-r', loader, '-e', "const db=require('./src/database.ts'); console.log(db.prepare('PRAGMA integrity_check').get().integrity_check); db.close()"], {
+    cwd: path.join(__dirname, '..'), env: { ...process.env, REALMFORGE_DATA_DIR: dataDir }, encoding: 'utf8',
+  })
+  assert.equal(initialized.status, 0, initialized.stderr || initialized.stdout)
+  assert.match(initialized.stdout, /ok/)
+  const db = new DatabaseSync(path.join(dataDir, 'realmforge.sqlite'), { readOnly: true })
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map((row) => row.name)
+  assert.ok(tables.includes('players'))
+  assert.ok(tables.includes('campaign_memberships'))
+  assert.ok(tables.includes('character_ownership'))
+  assert.ok(tables.includes('character_journal_entries'))
+  assert.ok(tables.includes('campaign_log_entries'))
+  db.close()
+})

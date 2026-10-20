@@ -40,6 +40,7 @@ export interface ResolveCheckInput {
   key: string
   mode: RollMode
   situationalModifier: number
+  exhaustionPenalty?: number
   dc?: number
 }
 
@@ -58,6 +59,7 @@ export interface ResolvedCheck {
   proficient: boolean
   proficiencyBonus: number
   situationalModifier: number
+  exhaustionPenalty: number
   mode: RollMode
   diceResults: number[]
   keptIndices: number[]
@@ -93,6 +95,9 @@ export function validateCheckInput(input: ResolveCheckInput): CheckDefinition {
   if (!Number.isInteger(input.situationalModifier) || input.situationalModifier < -100 || input.situationalModifier > 100) {
     throw new RangeError('Situational modifier must be a whole number from -100 to 100.')
   }
+  if (input.exhaustionPenalty !== undefined && (!Number.isInteger(input.exhaustionPenalty) || input.exhaustionPenalty > 0 || input.exhaustionPenalty < -12 || input.exhaustionPenalty % 2 !== 0)) {
+    throw new RangeError('Exhaustion penalty must be 0 to -12 in increments of 2.')
+  }
   if (input.dc !== undefined && (!Number.isInteger(input.dc) || input.dc < 1 || input.dc > 100)) {
     throw new RangeError('DC must be a whole number from 1 to 100.')
   }
@@ -111,15 +116,17 @@ export function resolveCheck(input: ResolveCheckInput, randomWord?: RandomWordGe
   const proficient = trainedKeys.includes(definition.key)
   const characterProficiency = proficiencyBonus(input.character.level)
   const proficiency = proficient ? characterProficiency : 0
+  const exhaustionPenalty = input.exhaustionPenalty ?? 0
   const roll = rollDice({ diceCount: 1, sides: 20, modifier: 0, mode: input.mode }, randomWord)
   const keptResult = roll.diceResults[roll.keptIndices[0]!]!
-  const total = keptResult + modifier + proficiency + input.situationalModifier
+  const total = keptResult + modifier + proficiency + exhaustionPenalty + input.situationalModifier
   const abilityName = ABILITIES.find(({ key }) => key === definition.ability)!.name
   const dieText = roll.mode === 'normal'
     ? `d20 (${keptResult})`
     : `d20 (${roll.diceResults.join(' / ')}, kept ${keptResult})`
   const parts = [dieText, `${abilityName} (${signed(modifier)})`]
   if (proficient) parts.push(`Proficiency (${signed(characterProficiency)})`)
+  if (exhaustionPenalty) parts.push(`Exhaustion (${signed(exhaustionPenalty)})`)
   if (input.situationalModifier !== 0) parts.push(`Situational (${signed(input.situationalModifier)})`)
   const dcPart = input.dc === undefined ? {} : {
     dc: input.dc,
@@ -141,6 +148,7 @@ export function resolveCheck(input: ResolveCheckInput, randomWord?: RandomWordGe
     proficient,
     proficiencyBonus: proficiency,
     situationalModifier: input.situationalModifier,
+    exhaustionPenalty,
     mode: input.mode,
     diceResults: [...roll.diceResults],
     keptIndices: [...roll.keptIndices],

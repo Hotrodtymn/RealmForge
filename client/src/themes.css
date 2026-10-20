@@ -1,0 +1,269 @@
+.app-shell[data-theme='classic'] {
+  --bg: #e8dec8; --panel: #f4ecd9; --panel-soft: #e2d4b5; --line: rgba(91, 63, 31, .2);
+  --muted: #69583f; --gold: #845b2d; --gold-bright: #67451f;
+  color: #362a1d; background: var(--bg);
+}
+.app-shell[data-theme='gothic'] {
+  --bg: #100d11; --panel: #1d151c; --panel-soft: #281b25; --line: rgba(209, 192, 202, .16);
+  --muted: #b1a2ae; --gold: #ad788e; --gold-bright: #e2cad7;
+  color: #eee6ec; background: var(--bg);
+}
+.app-shell[data-theme='tactical'] {
+  --bg: #09131c; --panel: #101f2b; --panel-soft: #162a38; --line: rgba(145, 185, 196, .2);
+  --muted: #a5bac1; --gold: #58bec0; --gold-bright: #9be4da;
+  color: #e6f0f1; background: var(--bg);
+}
+
+.app-shell[data-theme='classic'] .sidebar,
+.app-shell[data-theme='classic'] .topbar { background: #ded0b3; }
+.app-shell[data-theme='classic'] .nav-link,
+.app-shell[data-theme='classic'] .breadcrumb,
+.app-shell[data-theme='classic'] .server-status { color: #574732; }
+.app-shell[data-theme='classic'] h1,
+.app-shell[data-theme='classic'] h2,
+.app-shell[data-theme='classic'] h3,
+.app-shell[data-theme='classic'] h4,
+.app-shell[data-theme='classic'] .brand,
+.app-shell[data-theme='classic'] .breadcrumb strong { color: #352719; }
+.app-shell[data-theme='classic'] .campaign-card,
+.app-shell[data-theme='classic'] .campaign-message,
+.app-shell[data-theme='classic'] .player-card,
+.app-shell[data-theme='classic'] .combat-encounter-rail,
+.app-shell[data-theme='classic'] .combatant-card,
+.app-shell[data-theme='classic'] .combatants-section,
+.app-shell[data-theme='classic'] .combat-action-core,
+.app-shell[data-theme='classic'] .combat-attack-core,
+.app-shell[data-theme='classic'] .combat-action-effects-list,
+.app-shell[data-theme='classic'] .combat-action-history,
+.app-shell[data-theme='classic'] .combat-attack-history,
+.app-shell[data-theme='classic'] .combat-survival-feed,
+.app-shell[data-theme='classic'] .combat-add-form,
+.app-shell[data-theme='classic'] .combat-condition-panel { color: #413323; background: #f4ecd9; border-color: rgba(91,63,31,.22); }
+.app-shell[data-theme='classic'] .combat-field,
+.app-shell[data-theme='classic'] .combat-page-heading p,
+.app-shell[data-theme='classic'] .combatant-main > p,
+.app-shell[data-theme='classic'] .combat-muted { color: #69583f; }
+.app-shell[data-theme='classic'] .combat-field input,
+.app-shell[data-theme='classic'] .combat-field select,
+.app-shell[data-theme='classic'] .combat-manual-entry input,
+.app-shell[data-theme='classic'] .combat-attack-config { color: #352719; background: #fff9eb; }
+.app-shell[data-theme='classic'] .dice-panel,
+.app-shell[data-theme='classic'] .checks-controls,
+.app-shell[data-theme='classic'] .checks-result-panel,
+.app-shell[data-theme='classic'] .checks-history-panel,
+.app-shell[data-theme='classic'] .inventory-panel,
+.app-shell[data-theme='classic'] .sheet-dialog,
+.app-shell[data-theme='classic'] .character-form { color: #413323; background: #f4ecd9; border-color: rgba(91,63,31,.22); }
+.app-shell[data-theme='classic'] input,
+.app-shell[data-theme='classic'] select,
+.app-shell[data-theme='classic'] textarea { color: #352719; background-color: #fff9eb; border-color: rgba(91,63,31,.34); }
+.app-shell[data-theme='classic'] .campaign-card p,
+.app-shell[data-theme='classic'] .theme-settings > p,
+.app-shell[data-theme='classic'] .combat-encounter-title p { color: #594830; }
+
+.app-shell[data-theme='gothic'] .sidebar,
+.app-shell[data-theme='gothic'] .topbar { background: #171017; }
+.app-shell[data-theme='gothic'] .nav-link.active { color: #f0d8e2; background: linear-gradient(90deg,rgba(142,55,87,.3),rgba(142,55,87,.08)); }
+.app-shell[data-theme='gothic'] .campaign-card,
+.app-shell[data-theme='gothic'] .campaign-message,
+.app-shell[data-theme='gothic'] .player-card,
+.app-shell[data-theme='gothic'] .combat-encounter-rail,
+.app-shell[data-theme='gothic'] .combatant-card,
+.app-shell[data-theme='gothic'] .combatants-section,
+.app-shell[data-theme='gothic'] .combat-action-core,
+.app-shell[data-theme='gothic'] .combat-attack-core,
+.app-shell[data-theme='gothic'] .combat-action-effects-list,
+.app-shell[data-theme='gothic'] .combat-action-history,
+.app-shell[data-theme='gothic'] .combat-attack-history,
+.app-shell[data-theme='gothic'] .combat-survival-feed,
+.app-shell[data-theme='gothic'] .combat-add-form,
+.app-shell[data-theme='gothic'] .combat-condition-panel { color: #e9dfe6; background: #1d151c; border-color: rgba(190,133,158,.2); }
+.app-shell[data-theme='gothic'] .combat-field input,
+.app-shell[data-theme='gothic'] .combat-field select,
+.app-shell[data-theme='gothic'] .combat-manual-entry input,
+.app-shell[data-theme='gothic'] .combat-attack-config { color: #f0e7ed; background: #120f13; }
+.app-shell[data-theme='gothic'] .combat-primary-button { border-color: #b6778e; color: #fff2f7; background: linear-gradient(135deg,#78374f,#57293c); }
+.app-shell[data-theme='gothic'] .dice-panel,
+.app-shell[data-theme='gothic'] .checks-controls,
+.app-shell[data-theme='gothic'] .checks-result-panel,
+.app-shell[data-theme='gothic'] .checks-history-panel,
+.app-shell[data-theme='gothic'] .inventory-panel,
+.app-shell[data-theme='gothic'] .sheet-dialog,
+.app-shell[data-theme='gothic'] .character-form { color: #eee5eb; background: #1d151c; border-color: rgba(190,133,158,.2); }
+.app-shell[data-theme='gothic'] input,
+.app-shell[data-theme='gothic'] select,
+.app-shell[data-theme='gothic'] textarea { color: #f0e7ed; background-color: #120f13; border-color: rgba(190,133,158,.27); }
+
+.app-shell[data-theme='tactical'] .sidebar,
+.app-shell[data-theme='tactical'] .topbar { background: #0c1924; }
+.app-shell[data-theme='tactical'] .nav-link.active { color: #d5fffa; background: linear-gradient(90deg,rgba(40,151,153,.28),rgba(40,151,153,.07)); }
+.app-shell[data-theme='tactical'] .campaign-card,
+.app-shell[data-theme='tactical'] .campaign-message,
+.app-shell[data-theme='tactical'] .player-card,
+.app-shell[data-theme='tactical'] .combat-encounter-rail,
+.app-shell[data-theme='tactical'] .combatant-card,
+.app-shell[data-theme='tactical'] .combatants-section,
+.app-shell[data-theme='tactical'] .combat-action-core,
+.app-shell[data-theme='tactical'] .combat-attack-core,
+.app-shell[data-theme='tactical'] .combat-action-effects-list,
+.app-shell[data-theme='tactical'] .combat-action-history,
+.app-shell[data-theme='tactical'] .combat-attack-history,
+.app-shell[data-theme='tactical'] .combat-survival-feed,
+.app-shell[data-theme='tactical'] .combat-add-form,
+.app-shell[data-theme='tactical'] .combat-condition-panel { color: #e6f0f1; background: #101f2b; border-color: rgba(92,180,184,.24); }
+.app-shell[data-theme='tactical'] .combat-field input,
+.app-shell[data-theme='tactical'] .combat-field select,
+.app-shell[data-theme='tactical'] .combat-manual-entry input,
+.app-shell[data-theme='tactical'] .combat-attack-config { color: #e6f0f1; background: #09151e; }
+.app-shell[data-theme='tactical'] .combat-primary-button { border-color: #55babc; color: #062126; background: linear-gradient(135deg,#8be0d6,#51b6b7); }
+.app-shell[data-theme='tactical'] .dice-panel,
+.app-shell[data-theme='tactical'] .checks-controls,
+.app-shell[data-theme='tactical'] .checks-result-panel,
+.app-shell[data-theme='tactical'] .checks-history-panel,
+.app-shell[data-theme='tactical'] .inventory-panel,
+.app-shell[data-theme='tactical'] .sheet-dialog,
+.app-shell[data-theme='tactical'] .character-form { color: #e6f0f1; background: #101f2b; border-color: rgba(92,180,184,.24); }
+.app-shell[data-theme='tactical'] input,
+.app-shell[data-theme='tactical'] select,
+.app-shell[data-theme='tactical'] textarea { color: #e6f0f1; background-color: #09151e; border-color: rgba(92,180,184,.32); }
+
+.theme-settings { padding: 42px 0 60px; }
+.theme-settings > h1 { margin: 15px 0 8px; }
+.theme-settings > p { max-width: 580px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.theme-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-top: 24px; }
+.theme-option { min-width: 0; display: grid; justify-items: start; gap: 8px; padding: 18px; border: 1px solid var(--line); border-radius: 5px; color: inherit; background: var(--panel); text-align: left; cursor: pointer; }
+.theme-option:hover, .theme-option.selected { border-color: var(--gold); box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent); }
+.theme-option strong { font: 600 15px var(--serif); }
+.theme-option small { color: var(--muted); font-size: 10px; }
+.theme-selected { color: var(--gold-bright); font-size: 9px; }
+.theme-swatches { display: flex; gap: 5px; }
+.theme-swatches i { width: 22px; height: 22px; border: 1px solid rgba(128,128,128,.3); border-radius: 50%; background: #11120f; }
+.theme-swatches i:nth-child(2) { background: #c7a96b; }
+.theme-swatches i:nth-child(3) { background: #171814; }
+.theme-option.classic .theme-swatches i { background: #e8dec8; }.theme-option.classic .theme-swatches i:nth-child(2) { background: #845b2d; }.theme-option.classic .theme-swatches i:nth-child(3) { background: #f4ecd9; }
+.theme-option.gothic .theme-swatches i { background: #100d11; }.theme-option.gothic .theme-swatches i:nth-child(2) { background: #ad536f; }.theme-option.gothic .theme-swatches i:nth-child(3) { background: #c8bdc7; }
+.theme-option.tactical .theme-swatches i { background: #09131c; }.theme-option.tactical .theme-swatches i:nth-child(2) { background: #58bec0; }.theme-option.tactical .theme-swatches i:nth-child(3) { background: #8295a3; }
+.theme-note { margin-top: 18px; }
+.combat-survival-panel { display: grid; gap: 8px; margin: 8px 0; padding: 10px; border: 1px solid rgba(184,108,96,.23); border-radius: 3px; background: rgba(184,108,96,.045); }
+.combat-survival-counters { display: flex; flex-wrap: wrap; gap: 10px 20px; color: #bcb8aa; font-size: 9px; }
+.combat-survival-counters b { color: #e0cc96; }
+.combat-survival-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.combat-survival-history { display: grid; gap: 4px; margin: 0; padding-left: 17px; color: #89897f; font-size: 8px; line-height: 1.5; }
+.combat-survival-panel > p { color: #aaa797; font-size: 9px; line-height: 1.5; }
+.survival-status.stable { color: #a6c5a5; }.survival-status.dead { color: #d18c80; }
+.app-shell[data-theme='classic'] .combat-survival-panel { background: #efe0c5; border-color: #9c7345; }
+.app-shell[data-theme='classic'] .combat-survival-counters,.app-shell[data-theme='classic'] .combat-survival-history,.app-shell[data-theme='classic'] .combat-survival-panel > p { color: #55432e; }
+.app-shell[data-theme='gothic'] .combat-survival-panel { background: #2a1822; border-color: #8b4a64; }
+.app-shell[data-theme='tactical'] .combat-survival-panel { background: #102c36; border-color: #398d91; }
+
+/* Solo Adventure keeps its layout while following the selected workspace palette. */
+.app-shell[data-theme='classic'] .solo-panel,
+.app-shell[data-theme='classic'] .solo-selectors,
+.app-shell[data-theme='classic'] .solo-session-header,
+.app-shell[data-theme='classic'] .solo-start-card { color: #413323; background: #f4ecd9; border-color: rgba(91,63,31,.22); }
+.app-shell[data-theme='classic'] .solo-topline h1,
+.app-shell[data-theme='classic'] .solo-session-header h2,
+.app-shell[data-theme='classic'] .solo-panel-heading h3,
+.app-shell[data-theme='classic'] .solo-start-card h2,
+.app-shell[data-theme='classic'] .solo-destinations strong,
+.app-shell[data-theme='classic'] .solo-npc-list strong { color: #352719; }
+.app-shell[data-theme='classic'] .solo-topline p,
+.app-shell[data-theme='classic'] .solo-start-card > div > p,
+.app-shell[data-theme='classic'] .solo-scene-description,
+.app-shell[data-theme='classic'] .solo-support-copy,
+.app-shell[data-theme='classic'] .solo-muted,
+.app-shell[data-theme='classic'] .solo-session-header p,
+.app-shell[data-theme='classic'] .solo-data-note,
+.app-shell[data-theme='classic'] .solo-destinations p,
+.app-shell[data-theme='classic'] .solo-npc-list p { color: #594830; }
+.app-shell[data-theme='classic'] .solo-spell-slots h4 { color: #845b2d; }
+.app-shell[data-theme='classic'] .solo-spell-slots > div { color: #69583f; border-color: rgba(91,63,31,.14); }
+.app-shell[data-theme='classic'] .solo-spell-slots strong { color: #352719; }
+.app-shell[data-theme='classic'] .solo-management-button,
+.app-shell[data-theme='classic'] .solo-session-controls button,
+.app-shell[data-theme='classic'] .solo-destinations button,
+.app-shell[data-theme='classic'] .solo-text-button { color: #67451f; }
+.app-shell[data-theme='classic'] .solo-primary-button { color: #fff9eb; background: #845b2d; }
+.app-shell[data-theme='classic'] .solo-scene-list button,
+.app-shell[data-theme='classic'] .solo-destinations article,
+.app-shell[data-theme='classic'] .solo-npc-list article,
+.app-shell[data-theme='classic'] .solo-journal li { background: #efe3ca; }
+
+.app-shell[data-theme='gothic'] .solo-panel,
+.app-shell[data-theme='gothic'] .solo-selectors,
+.app-shell[data-theme='gothic'] .solo-session-header,
+.app-shell[data-theme='gothic'] .solo-start-card { color: #eee5eb; background: #1d151c; border-color: rgba(190,133,158,.2); }
+.app-shell[data-theme='gothic'] .solo-kicker,
+.app-shell[data-theme='gothic'] .solo-location-line,
+.app-shell[data-theme='gothic'] .solo-text-button,
+.app-shell[data-theme='gothic'] .solo-destinations small,
+.app-shell[data-theme='gothic'] .solo-npc-list small { color: #c38ba1; }
+.app-shell[data-theme='gothic'] .solo-spell-slots h4 { color: #c38ba1; }
+.app-shell[data-theme='gothic'] .solo-spell-slots strong { color: #eee5eb; }
+.app-shell[data-theme='gothic'] .solo-topline h1,
+.app-shell[data-theme='gothic'] .solo-session-header h2,
+.app-shell[data-theme='gothic'] .solo-panel-heading h3,
+.app-shell[data-theme='gothic'] .solo-start-card h2,
+.app-shell[data-theme='gothic'] .solo-destinations strong,
+.app-shell[data-theme='gothic'] .solo-npc-list strong { color: #eee5eb; }
+.app-shell[data-theme='gothic'] .solo-primary-button { border-color: #b6778e; color: #fff2f7; background: linear-gradient(135deg,#78374f,#57293c); }
+.app-shell[data-theme='gothic'] .solo-scene-list button,
+.app-shell[data-theme='gothic'] .solo-destinations article,
+.app-shell[data-theme='gothic'] .solo-npc-list article,
+.app-shell[data-theme='gothic'] .solo-journal li { background: #120f13; }
+
+.app-shell[data-theme='tactical'] .solo-panel,
+.app-shell[data-theme='tactical'] .solo-selectors,
+.app-shell[data-theme='tactical'] .solo-session-header,
+.app-shell[data-theme='tactical'] .solo-start-card { color: #e6f0f1; background: #101f2b; border-color: rgba(92,180,184,.24); }
+.app-shell[data-theme='tactical'] .solo-kicker,
+.app-shell[data-theme='tactical'] .solo-location-line,
+.app-shell[data-theme='tactical'] .solo-text-button,
+.app-shell[data-theme='tactical'] .solo-destinations small,
+.app-shell[data-theme='tactical'] .solo-npc-list small { color: #73c9c9; }
+.app-shell[data-theme='tactical'] .solo-spell-slots h4 { color: #73c9c9; }
+.app-shell[data-theme='tactical'] .solo-spell-slots strong { color: #e6f0f1; }
+.app-shell[data-theme='tactical'] .solo-topline h1,
+.app-shell[data-theme='tactical'] .solo-session-header h2,
+.app-shell[data-theme='tactical'] .solo-panel-heading h3,
+.app-shell[data-theme='tactical'] .solo-start-card h2,
+.app-shell[data-theme='tactical'] .solo-destinations strong,
+.app-shell[data-theme='tactical'] .solo-npc-list strong { color: #e6f0f1; }
+.app-shell[data-theme='tactical'] .solo-primary-button { border-color: #55babc; color: #062126; background: linear-gradient(135deg,#8be0d6,#51b6b7); }
+.app-shell[data-theme='tactical'] .solo-scene-list button,
+.app-shell[data-theme='tactical'] .solo-destinations article,
+.app-shell[data-theme='tactical'] .solo-npc-list article,
+.app-shell[data-theme='tactical'] .solo-journal li { background: #09151e; }
+
+.app-shell[data-theme='classic'] .combat-action-core,
+.app-shell[data-theme='classic'] .combat-attack-core,
+.app-shell[data-theme='classic'] .combat-action-effects-list,
+.app-shell[data-theme='classic'] .combat-action-history,
+.app-shell[data-theme='classic'] .combat-attack-history,
+.app-shell[data-theme='classic'] .combat-survival-feed { color: #413323; background: #f4ecd9; border-color: rgba(91,63,31,.22); }
+.app-shell[data-theme='classic'] .combat-action-resource,
+.app-shell[data-theme='classic'] .combat-action-effects-list article { color: #413323; background: #efe3ca; border-color: rgba(91,63,31,.18); }
+.app-shell[data-theme='classic'] .combat-action-resource > span,
+.app-shell[data-theme='classic'] .combat-action-effects-list h4,
+.app-shell[data-theme='classic'] .combat-action-effects-list article p,
+.app-shell[data-theme='classic'] .combat-action-consume { color: #493a27; }
+.app-shell[data-theme='gothic'] .combat-action-core,
+.app-shell[data-theme='gothic'] .combat-attack-core,
+.app-shell[data-theme='gothic'] .combat-action-effects-list,
+.app-shell[data-theme='gothic'] .combat-action-history,
+.app-shell[data-theme='gothic'] .combat-attack-history,
+.app-shell[data-theme='gothic'] .combat-survival-feed { color: #e9dfe6; background: #1d151c; border-color: rgba(190,133,158,.24); }
+.app-shell[data-theme='gothic'] .combat-action-resource,
+.app-shell[data-theme='gothic'] .combat-action-effects-list article { background: #120f13; border-color: rgba(190,133,158,.18); }
+.app-shell[data-theme='tactical'] .combat-action-core,
+.app-shell[data-theme='tactical'] .combat-attack-core,
+.app-shell[data-theme='tactical'] .combat-action-effects-list,
+.app-shell[data-theme='tactical'] .combat-action-history,
+.app-shell[data-theme='tactical'] .combat-attack-history,
+.app-shell[data-theme='tactical'] .combat-survival-feed { color: #e6f0f1; background: #101f2b; border-color: rgba(92,180,184,.24); }
+.app-shell[data-theme='tactical'] .combat-action-resource,
+.app-shell[data-theme='tactical'] .combat-action-effects-list article { background: #09151e; border-color: rgba(92,180,184,.18); }
+.app-shell[data-theme='tactical'] .combat-action-resource > span,
+.app-shell[data-theme='tactical'] .combat-action-effects-list h4 { color: #c2e5e4; }
+
+@media (max-width: 600px) { .theme-options { grid-template-columns: minmax(0, 1fr); } }

@@ -40,6 +40,7 @@ test('combat encounters validate scope, manage initiative and turns, and persist
     throw new Error('Server did not become ready')
   }
   async function request(route, method = 'GET', body) {
+    if (route.endsWith('/next-turn') && method === 'POST' && body === undefined) body = { actionId: require('node:crypto').randomUUID() }
     const response = await fetch(`${base}${route}`, {
       method, headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
@@ -133,11 +134,13 @@ test('combat encounters validate scope, manage initiative and turns, and persist
   assert.equal((await request(`${playerHpPath}/hit-points`, 'PUT', { currentHp: 5, maxHp: -1 })).status, 400)
   assert.equal((await request(`${playerHpPath}/hit-points`, 'PUT', { currentHp: 5.5, maxHp: 8 })).status, 400)
   assert.equal((await request(`${playerHpPath}/hit-points`, 'PUT', { currentHp: 9, maxHp: 8 })).status, 400)
+  assert.equal((await request(`${playerHpPath}/hit-points`, 'PUT', { currentHp: 2, maxHp: 8 })).status, 200)
   const reducedToZero = await request(`${playerHpPath}/damage`, 'POST', { amount: 3 })
   assert.equal(reducedToZero.body.combatants.find((entry) => entry.id === playerCombatant.id).currentHp, 0)
-  assert.deepEqual(reducedToZero.body.combatants.find((entry) => entry.id === playerCombatant.id).conditions, [])
+  assert.ok(reducedToZero.body.combatants.find((entry) => entry.id === playerCombatant.id).conditions.some((condition) => condition.condition === 'unconscious'))
   let changedHp = await request(`${playerHpPath}/heal`, 'POST', { amount: 20 })
-  assert.equal(changedHp.body.combatants.find((entry) => entry.id === playerCombatant.id).currentHp, 1)
+  assert.equal(changedHp.status, 200, JSON.stringify(changedHp.body))
+  assert.equal(changedHp.body.combatants.find((entry) => entry.id === playerCombatant.id).currentHp, 8)
   changedHp = await request(`${playerHpPath}/hit-points`, 'PUT', { currentHp: 12, maxHp: 15 })
   assert.equal(changedHp.status, 200)
   assert.equal(changedHp.body.combatants.find((entry) => entry.id === playerCombatant.id).maxHp, 15)

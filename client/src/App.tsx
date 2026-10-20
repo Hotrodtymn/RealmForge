@@ -4,7 +4,15 @@ import Checks from './Checks'
 import CharacterSheet, { type SheetCharacter } from './CharacterSheet'
 import Inventory from './Inventory'
 import Combat from './Combat'
+import Spellcasting from './Spellcasting'
+import Adventures from './Adventures'
+import SoloAdventure from './SoloAdventure'
+import LaunchCampaign from './LaunchCampaign'
 import './App.css'
+import './themes.css'
+import { readTheme, saveTheme, type ThemeId } from './themePreferences.mjs'
+import { interfaceGreeting, interfaceModeIndicator, navigationForMode, resolveInterfaceMode } from './interfaceRoutes.mjs'
+import { playerSelectionFromSearch } from './launchCampaignFlow.mjs'
 
 type ServerState = 'checking' | 'online' | 'offline'
 type CharacterStatus = 'active' | 'prepared' | 'dead' | 'retired'
@@ -78,14 +86,27 @@ const navItems = [
   { label: 'Checks', icon: '⚔' },
   { label: 'Inventory', icon: '♜' },
   { label: 'Combat', icon: '⚔' },
+  { label: 'Spellcasting', icon: '✧' },
+  { label: 'Adventures', icon: '✦' },
+  { label: 'Solo Adventure', icon: '➤' },
   { label: 'Settings', icon: '⚙' },
+]
+const themes: { id: ThemeId; name: string; detail: string }[] = [
+  { id: 'classic', name: 'Classic Fantasy', detail: 'Parchment, bronze, and warm neutrals' },
+  { id: 'modern', name: 'Modern Dark Fantasy', detail: 'Charcoal, muted gold, and clean panels' },
+  { id: 'gothic', name: 'Gothic Medieval', detail: 'Black, burgundy, and silver' },
+  { id: 'tactical', name: 'Tactical Command', detail: 'Navy, steel, teal, and high-contrast status' },
 ]
 
 async function readPayload<T>(response: Response): Promise<T & ApiError> {
   return await response.json() as T & ApiError
 }
 
+function readPlayerSelection() { return playerSelectionFromSearch(window.location.search) }
+
 function App() {
+  const [theme, setTheme] = useState<ThemeId>(readTheme)
+  const [interfaceMode, setInterfaceMode] = useState(() => resolveInterfaceMode(window.location.pathname))
   const [serverState, setServerState] = useState<ServerState>('checking')
   const [notice, setNotice] = useState('')
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
@@ -114,7 +135,28 @@ function App() {
   const [checksOpen, setChecksOpen] = useState(false)
   const [inventoryOpen, setInventoryOpen] = useState(false)
   const [combatOpen, setCombatOpen] = useState(false)
+  const [spellcastingOpen, setSpellcastingOpen] = useState(false)
+  const [adventuresOpen, setAdventuresOpen] = useState(false)
+  const [soloAdventureOpen, setSoloAdventureOpen] = useState(false)
+  const [launchCampaignOpen, setLaunchCampaignOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [openSheetId, setOpenSheetId] = useState<string | null>(null)
+
+  const visibleNavItems = navigationForMode(navItems, interfaceMode)
+  const modeIndicator = interfaceModeIndicator(interfaceMode)
+  const greeting = interfaceGreeting(interfaceMode)
+
+  useEffect(() => { saveTheme(theme) }, [theme])
+  useEffect(() => {
+    const syncRoute = () => setInterfaceMode(resolveInterfaceMode(window.location.pathname))
+    window.addEventListener('popstate', syncRoute)
+    return () => window.removeEventListener('popstate', syncRoute)
+  }, [])
+  useEffect(() => {
+    if (interfaceMode !== 'dm') return
+    setSoloAdventureOpen(false)
+    setSelectedCampaign(null)
+  }, [interfaceMode])
 
   const checkServer = useCallback(async () => {
     setServerState('checking')
@@ -205,7 +247,11 @@ function App() {
     setChecksOpen(false)
     setInventoryOpen(false)
     setCombatOpen(false)
+    setSpellcastingOpen(false)
+    setAdventuresOpen(false)
+    setSettingsOpen(false)
     setPlayers([])
+    setSoloAdventureOpen(false)
     setRosterNotice('')
     setPlayerFormOpen(false)
     setCharacterFormPlayerId(null)
@@ -296,23 +342,40 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell interface-${interfaceMode}`} data-theme={theme}>
       <aside className="sidebar">
-        <a className="brand" href="#dashboard" aria-label="RealmForge home">
-          <span className="brand-mark" aria-hidden="true"><span>✦</span></span>
-          <span className="brand-name">Realm<span>Forge</span></span>
-        </a>
+        <div className="sidebar-brand-header">
+          <a className="brand" href="#dashboard" aria-label="RealmForge home">
+            <span className="brand-mark" aria-hidden="true"><span>✦</span></span>
+            <span className="brand-name">Realm<span>Forge</span></span>
+          </a>
+          {modeIndicator && <span className={`sidebar-mode-indicator ${modeIndicator.className}`} aria-label={modeIndicator.label}>{modeIndicator.label}</span>}
+        </div>
         <div className="nav-caption">WORKSPACE</div>
         <nav className="main-nav" aria-label="Main navigation">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <a
-              className={`nav-link${(item.label === 'Dice Roller' && diceRollerOpen) || (item.label === 'Checks' && checksOpen) || (item.label === 'Inventory' && inventoryOpen) || (item.label === 'Combat' && combatOpen) || (item.active && !selectedCampaign && !diceRollerOpen && !checksOpen && !inventoryOpen && !combatOpen) ? ' active' : ''}`}
-              href={item.label === 'Dice Roller' ? '#dice-roller' : item.label === 'Checks' ? '#checks-heading' : item.label === 'Inventory' ? '#inventory-heading' : item.label === 'Combat' ? '#combat-heading' : item.active ? '#dashboard' : item.label === 'Campaigns' ? '#campaign-heading' : '#'}
+              className={`nav-link${(item.label === 'Dice Roller' && diceRollerOpen) || (item.label === 'Checks' && checksOpen) || (item.label === 'Inventory' && inventoryOpen) || (item.label === 'Combat' && combatOpen) || (item.label === 'Spellcasting' && spellcastingOpen) || (item.label === 'Adventures' && adventuresOpen) || (item.label === 'Solo Adventure' && (soloAdventureOpen || interfaceMode === 'player')) || (item.label === 'Settings' && settingsOpen) || (item.active && !selectedCampaign && !diceRollerOpen && !checksOpen && !inventoryOpen && !combatOpen && !spellcastingOpen && !adventuresOpen && !soloAdventureOpen && !settingsOpen) ? ' active' : ''}`}
+              href={item.label === 'Dice Roller' ? '#dice-roller' : item.label === 'Checks' ? '#checks-heading' : item.label === 'Inventory' ? '#inventory-heading' : item.label === 'Combat' ? '#combat-heading' : item.label === 'Spellcasting' ? '#spellcasting-heading' : item.label === 'Adventures' ? '#adventures-heading' : item.label === 'Solo Adventure' ? '#solo-heading' : item.label === 'Settings' ? '#theme-settings-heading' : item.active ? '#dashboard' : item.label === 'Campaigns' ? '#campaign-heading' : '#'}
               key={item.label}
               aria-label={item.label}
               title={item.label}
-              aria-current={(item.label === 'Dice Roller' && diceRollerOpen) || (item.label === 'Checks' && checksOpen) || (item.label === 'Inventory' && inventoryOpen) || (item.label === 'Combat' && combatOpen) || (item.active && !selectedCampaign && !diceRollerOpen && !checksOpen && !inventoryOpen && !combatOpen) ? 'page' : undefined}
+              aria-current={(item.label === 'Dice Roller' && diceRollerOpen) || (item.label === 'Checks' && checksOpen) || (item.label === 'Inventory' && inventoryOpen) || (item.label === 'Combat' && combatOpen) || (item.label === 'Spellcasting' && spellcastingOpen) || (item.label === 'Adventures' && adventuresOpen) || (item.label === 'Solo Adventure' && (soloAdventureOpen || interfaceMode === 'player')) || (item.label === 'Settings' && settingsOpen) || (item.active && !selectedCampaign && !diceRollerOpen && !checksOpen && !inventoryOpen && !combatOpen && !spellcastingOpen && !adventuresOpen && !soloAdventureOpen && !settingsOpen) ? 'page' : undefined}
               onClick={(event) => {
+                setLaunchCampaignOpen(false)
+                if (item.label !== 'Spellcasting') setSpellcastingOpen(false)
+                if (item.label === 'Adventures') {
+                  event.preventDefault(); setSelectedCampaign(null); setDiceRollerOpen(false); setChecksOpen(false); setInventoryOpen(false); setCombatOpen(false); setSpellcastingOpen(false); setAdventuresOpen(true); setSoloAdventureOpen(false); setSettingsOpen(false)
+                  return
+                }
+                if (item.label === 'Solo Adventure') {
+                  event.preventDefault(); setSelectedCampaign(null); setDiceRollerOpen(false); setChecksOpen(false); setInventoryOpen(false); setCombatOpen(false); setSpellcastingOpen(false); setAdventuresOpen(false); setSoloAdventureOpen(true); setSettingsOpen(false)
+                  return
+                }
+                if (item.label === 'Spellcasting') {
+                  event.preventDefault(); setSelectedCampaign(null); setDiceRollerOpen(false); setChecksOpen(false); setInventoryOpen(false); setCombatOpen(false); setSpellcastingOpen(true); setAdventuresOpen(false); setSoloAdventureOpen(false); setSettingsOpen(false)
+                  return
+                }
                 if (item.label === 'Dice Roller') {
                   event.preventDefault()
                   setSelectedCampaign(null)
@@ -320,6 +383,10 @@ function App() {
                   setChecksOpen(false)
                   setInventoryOpen(false)
                   setCombatOpen(false)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
                   return
                 }
                 if (item.label === 'Checks') {
@@ -329,6 +396,10 @@ function App() {
                   setChecksOpen(true)
                   setInventoryOpen(false)
                   setCombatOpen(false)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
                   return
                 }
                 if (item.label === 'Combat') {
@@ -338,6 +409,10 @@ function App() {
                   setChecksOpen(false)
                   setInventoryOpen(false)
                   setCombatOpen(true)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
                   return
                 }
                 if (item.label === 'Inventory') {
@@ -347,6 +422,10 @@ function App() {
                   setChecksOpen(false)
                   setInventoryOpen(true)
                   setCombatOpen(false)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
                   return
                 }
                 if (item.label === 'Campaigns') {
@@ -356,6 +435,10 @@ function App() {
                   setChecksOpen(false)
                   setInventoryOpen(false)
                   setCombatOpen(false)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
                   return
                 }
                 if (item.label === 'Dashboard') {
@@ -364,6 +447,15 @@ function App() {
                   setChecksOpen(false)
                   setInventoryOpen(false)
                   setCombatOpen(false)
+                  setSpellcastingOpen(false)
+                  setAdventuresOpen(false)
+                  setSoloAdventureOpen(false)
+                  setSettingsOpen(false)
+                  return
+                }
+                if (item.label === 'Settings') {
+                  event.preventDefault()
+                  setSelectedCampaign(null); setDiceRollerOpen(false); setChecksOpen(false); setInventoryOpen(false); setCombatOpen(false); setSpellcastingOpen(false); setAdventuresOpen(false); setSoloAdventureOpen(false); setSettingsOpen(true)
                   return
                 }
                 if (!item.active) {
@@ -379,7 +471,7 @@ function App() {
           ))}
         </nav>
 
-        <div className="sidebar-bottom">
+        <div className="sidebar-bottom" hidden={interfaceMode === "player"}>
           <div className="sidebar-rule" />
           <div className="table-card">
             <div className="table-card-icon">♜</div>
@@ -396,7 +488,7 @@ function App() {
 
       <main className="main-content" id="dashboard">
         <header className="topbar">
-          <div className="breadcrumb"><span>Workspace</span><span className="crumb-divider">/</span><strong>{combatOpen ? 'Combat' : inventoryOpen ? 'Inventory' : checksOpen ? 'Checks' : diceRollerOpen ? 'Dice Roller' : selectedCampaign ? 'Campaign Roster' : 'Dashboard'}</strong></div>
+          <div className="breadcrumb"><span>Workspace</span><span className="crumb-divider">/</span><strong>{interfaceMode === 'player' ? 'My Adventure' : settingsOpen ? 'Settings' : soloAdventureOpen ? 'Solo Adventure' : launchCampaignOpen ? 'Launch Campaign' : adventuresOpen ? 'Adventures' : spellcastingOpen ? 'Spellcasting' : combatOpen ? 'Combat' : inventoryOpen ? 'Inventory' : checksOpen ? 'Checks' : diceRollerOpen ? 'Dice Roller' : selectedCampaign ? 'Campaign Roster' : 'Dashboard'}</strong></div>
           <div className={`server-status ${serverState}`} role="status" aria-live="polite">
             <span className="status-dot" />
             <span>{serverState === 'checking' ? 'Checking server' : serverState === 'online' ? 'Server online' : 'Server offline'}</span>
@@ -407,13 +499,13 @@ function App() {
         {notice && <div className="global-notice" role="status">{notice}<button onClick={() => setNotice('')} aria-label="Dismiss notice">×</button></div>}
 
         <div className="content-wrap">
-          {combatOpen ? <Combat campaigns={campaigns} /> : inventoryOpen ? <Inventory campaigns={campaigns} /> : checksOpen ? <Checks campaigns={campaigns} /> : diceRollerOpen ? <DiceRoller /> : !selectedCampaign ? (
+          {interfaceMode === 'player' ? <SoloAdventure campaigns={campaigns} playerMode welcomeMessage={greeting} initialSelection={readPlayerSelection()} onReturnToManagement={() => {}} onOpenRoster={() => {}} /> : launchCampaignOpen ? <LaunchCampaign onManualCampaign={() => { setLaunchCampaignOpen(false); setCampaignFormOpen(true); setCampaignSubmitError(''); setCampaignFormErrors({}) }} onCampaignSaved={(campaign) => setCampaigns((rows) => [campaign, ...rows.filter((row) => row.id !== campaign.id)])} onEnterAdventure={(selection) => { const query = new URLSearchParams(selection); window.history.pushState({}, '', `/player?${query.toString()}`); setInterfaceMode('player'); setLaunchCampaignOpen(false); setSelectedCampaign(null); setSoloAdventureOpen(false) }} /> : settingsOpen ? <section className="theme-settings" aria-labelledby="theme-settings-heading"><div className="eyebrow"><span className="eyebrow-line" />APPEARANCE</div><h1 id="theme-settings-heading">Choose your realm</h1><p>Preview four palettes across the campaign workspace. Your choice is saved on this device.</p><div className="theme-options" role="group" aria-label="RealmForge visual theme">{themes.map((entry) => <button type="button" aria-pressed={theme === entry.id} className={`theme-option ${entry.id}${theme === entry.id ? ' selected' : ''}`} key={entry.id} onClick={() => setTheme(entry.id)}><span className="theme-swatches" aria-hidden="true"><i /><i /><i /></span><strong>{entry.name}</strong><small>{entry.detail}</small>{theme === entry.id && <span className="theme-selected">Selected</span>}</button>)}</div><p className="theme-note">Modern Dark Fantasy is the default theme. Theme selection does not affect campaign data.</p></section> : soloAdventureOpen ? <SoloAdventure campaigns={campaigns} onReturnToManagement={() => { setSoloAdventureOpen(false); setAdventuresOpen(true) }} onOpenRoster={(id) => { const target = campaigns.find((item) => item.id === id); if (target) openRoster(target) }} /> : adventuresOpen ? <Adventures campaigns={campaigns} /> : spellcastingOpen ? <Spellcasting campaigns={campaigns} /> : combatOpen ? <Combat campaigns={campaigns} /> : inventoryOpen ? <Inventory campaigns={campaigns} /> : checksOpen ? <Checks campaigns={campaigns} /> : diceRollerOpen ? <DiceRoller /> : !selectedCampaign ? (
             <>
               <section className="welcome-section">
                 <div className="welcome-copy">
                   <div className="eyebrow"><span className="eyebrow-line" />YOUR ADVENTURE STARTS HERE</div>
-                  <h1>Welcome, <em>Adventurer.</em></h1>
-                  <p>Your next great story is waiting to be told. Set the scene, gather your party, and let the legend begin.</p>
+                  <h1>{interfaceMode === 'legacy' ? <>Welcome, <em>Adventurer.</em></> : <>{greeting.slice(0, greeting.lastIndexOf(' '))} <em>{greeting.slice(greeting.lastIndexOf(' ') + 1)}</em></>}</h1>
+                  <p>Your next great story is waiting to be told. Set the scene, gather your party, and let the legend begin.</p><button type="button" className="launch-trigger" onClick={() => { setSelectedCampaign(null); setLaunchCampaignOpen(true); setCampaignFormOpen(false); setDiceRollerOpen(false); setChecksOpen(false); setInventoryOpen(false); setCombatOpen(false); setSpellcastingOpen(false); setAdventuresOpen(false); setSoloAdventureOpen(false); setSettingsOpen(false) }}>✦ <span>Launch Campaign</span><b>↗</b></button>
                 </div>
                 <div className="welcome-art" aria-hidden="true"><div className="moon-glow" /><div className="moon" /><div className="mountain mountain-back" /><div className="mountain mountain-front" /><div className="art-sigil">✦</div></div>
               </section>

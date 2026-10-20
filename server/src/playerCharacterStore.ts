@@ -119,12 +119,12 @@ namespace playerCharacterStore {
       const membershipId = crypto.randomUUID()
       const createdAt = new Date().toISOString()
 
-      database.prepare('INSERT INTO players (id, displayName, createdAt) VALUES (?, ?, ?)')
-        .run(playerId, displayName, createdAt)
+      database.prepare("INSERT INTO players (id, displayName, status, createdAt, updatedAt) VALUES (?, ?, 'active', ?, ?)")
+        .run(playerId, displayName, createdAt, createdAt)
       database.prepare(`
-        INSERT INTO campaign_memberships (id, campaignId, playerId, displayName, createdAt)
-        VALUES (?, ?, ?, ?, ?)
-      `).run(membershipId, campaignId, playerId, displayName, createdAt)
+        INSERT INTO campaign_memberships (id, campaignId, playerId, displayName, role, status, joinedAt, createdAt)
+        VALUES (?, ?, ?, ?, 'player', 'active', ?, ?)
+      `).run(membershipId, campaignId, playerId, displayName, createdAt, createdAt)
 
       return { id: membershipId, playerId, displayName, createdAt }
     })

@@ -1,0 +1,41 @@
+.combat-spell-effects { min-width: 0; margin: 18px 0; padding: clamp(14px, 2.2vw, 22px); border: 1px solid var(--line, rgba(224,210,174,.12)); border-radius: 12px; background: var(--panel, #171814); }
+.combat-spell-effects .combatants-heading { margin-bottom: 16px; }
+.combat-spell-effect-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 12px; }
+.combat-spell-effects .effect-wide, .combat-spell-effects .combat-primary-button { grid-column: 1 / -1; }
+.spell-effect-preview, .combat-effect-adjudication { min-width: 0; display: grid; gap: 5px; padding: 11px 12px; border: 1px solid var(--line, rgba(224,210,174,.1)); border-radius: 8px; background: var(--panel-soft, #1b1c17); }
+.spell-effect-preview strong, .combat-effect-adjudication strong { color: var(--gold-bright, #e0c783); font: 600 .9rem var(--serif, Georgia, serif); }
+.spell-effect-preview > span { color: var(--text, #e9e5dc); font-size: 1.05rem; font-weight: 700; overflow-wrap: anywhere; }
+.spell-effect-preview small, .combat-effect-adjudication p { color: var(--muted, #a4a092); font-size: .75rem; overflow-wrap: anywhere; }
+.combat-effect-adjudication p { margin: 0; }
+.combat-effect-targets { min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 12px; border: 1px solid var(--line, rgba(224,210,174,.12)); border-radius: 8px; }
+.combat-effect-targets legend { padding: 0 6px; color: var(--gold-bright, #e0c783); font: 600 .9rem var(--serif, Georgia, serif); }
+.combat-effect-targets label { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 3px 8px; padding: 8px; border-radius: 7px; background: var(--panel-soft, #1b1c17); cursor: pointer; }
+.combat-effect-targets input, .combat-effect-override input[type=checkbox] { accent-color: var(--gold, #c7a96b); }
+.combat-effect-targets input { grid-row: span 2; }
+.combat-effect-targets span { overflow-wrap: anywhere; color: var(--text, #e9e5dc); }
+.combat-effect-targets small { color: var(--muted, #a4a092); font-size: .7rem; }
+.combat-effect-override { display: grid; gap: 8px; }
+.combat-effect-override label { display: flex; align-items: center; gap: 8px; color: var(--text, #e9e5dc); font-size: .82rem; }
+.combat-effect-override > input { width: 100%; min-width: 0; padding: 9px; border: 1px solid var(--line, rgba(224,210,174,.16)); border-radius: 7px; background: var(--panel-soft, #1b1c17); color: var(--text, #e9e5dc); }
+.combat-effect-note, .combat-spell-effect-feedback { grid-column: 1 / -1; margin: 0; padding: 10px; border-radius: 7px; color: var(--muted, #a4a092); background: var(--panel-soft, #1b1c17); font-size: .82rem; }
+.combat-spell-effect-feedback.error { color: #f0b4aa; background: rgba(160,40,35,.12); }
+.combat-spell-effect-feedback.success { color: #d2dcae; background: rgba(100,130,70,.12); }
+.combat-spell-effects .combat-primary-button { justify-self: start; }
+.combat-spell-effect-history { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line, rgba(224,210,174,.12)); }
+.combat-spell-effect-history .combat-attack-history-heading { display: flex; justify-content: space-between; gap: 8px; }
+.combat-spell-effect-history .combat-attack-history-heading h4 { margin: 0; }
+.combat-spell-effect-event { min-width: 0; margin-top: 10px; padding: 12px; border: 1px solid var(--line, rgba(224,210,174,.1)); border-radius: 8px; background: var(--panel-soft, #1b1c17); }
+.combat-spell-effect-event > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.combat-spell-effect-event > header strong { color: var(--text, #e9e5dc); }
+.combat-spell-effect-event > header span, .combat-spell-effect-event small, .combat-spell-effect-event time { color: var(--muted, #a4a092); font-size: .75rem; }
+.combat-spell-effect-event p { margin: 7px 0; color: var(--muted, #a4a092); font-size: .8rem; line-height: 1.45; overflow-wrap: anywhere; }
+.combat-spell-effect-event p b { color: var(--gold-bright, #e0c783); text-transform: capitalize; }
+.combat-spell-effect-event p.applied { color: #cbd99c; }
+.combat-spell-effect-event small { display: block; line-height: 1.5; overflow-wrap: anywhere; }
+.combat-spell-effect-event .combat-primary-button { margin-top: 10px; }
+.combat-spell-effect-event time { display: block; margin-top: 8px; }
+@media (max-width: 640px) {
+  .combat-spell-effect-grid { grid-template-columns: 1fr; }
+  .combat-spell-effects .effect-wide, .combat-spell-effects .combat-primary-button { grid-column: auto; }
+  .combat-effect-targets { grid-template-columns: 1fr; }
+}

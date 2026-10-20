@@ -29,3 +29,10 @@ test('positive and negative situational modifiers are included, and invalid roll
   assert.throws(() => resolveAttack(0, 12, 'normal', 0, roller(0)), /invalid d20/)
   assert.throws(() => resolveAttack(0, 12, 'triple', 0, roller(8)), /Roll mode/)
 })
+
+test('verified condition Critical Hits apply on a hit within range but never override a natural 1 or miss', () => {
+  assert.equal(resolveAttack(2, 12, 'normal', 0, roller(10), true).outcome, 'critical_hit')
+  assert.equal(resolveAttack(-10, 12, 'normal', 0, roller(10), true).outcome, 'miss')
+  assert.equal(resolveAttack(100, 12, 'normal', 0, roller(1), true).outcome, 'miss')
+  assert.equal(resolveAttack(2, 12, 'normal', 0, roller(10), false).outcome, 'hit')
+})

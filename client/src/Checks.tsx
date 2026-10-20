@@ -43,6 +43,7 @@ interface SavedCharacter {
   createdAt: string
   updatedAt: string
 }
+interface ExhaustionEffect { encounterId: string; encounterName: string; level: number }
 
 interface Props {
   campaigns: Campaign[]
@@ -65,6 +66,8 @@ export default function Checks({ campaigns }: Props) {
   const [dc, setDc] = useState('')
   const [latest, setLatest] = useState<ResolvedCheck | null>(null)
   const [history, setHistory] = useState<ResolvedCheck[]>([])
+  const [exhaustionEffects, setExhaustionEffects] = useState<ExhaustionEffect[]>([])
+  const [exhaustionEncounterId, setExhaustionEncounterId] = useState('')
 
   useEffect(() => {
     if (!campaigns.length) {
@@ -121,6 +124,23 @@ export default function Checks({ campaigns }: Props) {
 
   useEffect(() => {
     const choice = selected
+    if (!choice) { setExhaustionEffects([]); setExhaustionEncounterId(''); return }
+    let cancelled = false
+    setExhaustionEffects([]); setExhaustionEncounterId('')
+    fetch(`${API_URL}/campaigns/${choice.campaignId}/characters/${choice.characterId}/exhaustion`).then(async (response) => {
+      const payload = await response.json() as { effects?: ExhaustionEffect[]; error?: string }
+      if (!response.ok) throw new Error(payload.error || 'Could not load active Exhaustion effects.')
+      if (!cancelled) {
+        const loaded = payload.effects ?? []
+        setExhaustionEffects(loaded)
+        if (loaded.length === 1) setExhaustionEncounterId(loaded[0]!.encounterId)
+      }
+    }).catch((cause) => { if (!cancelled) setError(cause instanceof Error ? cause.message : 'Could not load active Exhaustion effects.') })
+    return () => { cancelled = true }
+  }, [selected?.campaignId, selected?.characterId])
+
+  useEffect(() => {
+    const choice = selected
     if (!choice) {
       setCharacter(null)
       setSheetLoading(false)
@@ -163,6 +183,9 @@ export default function Checks({ campaigns }: Props) {
   const activeModifier = activeScore === null || activeScore === undefined ? null : abilityModifier(activeScore)
   const activeProficiency = character ? (checkProficient ? proficiencyBonus(character.level) : 0) : null
   const calculatedBonus = activeModifier === null || activeProficiency === null ? null : activeModifier + activeProficiency
+  const selectedExhaustion = exhaustionEffects.find((effect) => effect.encounterId === exhaustionEncounterId)
+  const exhaustionLevel = selectedExhaustion?.level ?? 0
+  const exhaustionPenalty = exhaustionLevel * -2
 
   function roll(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -170,6 +193,7 @@ export default function Checks({ campaigns }: Props) {
       setError('Select a character before rolling a check.')
       return
     }
+    if (exhaustionEffects.length > 1 && !exhaustionEncounterId) { setError('Choose the active encounter whose Exhaustion applies to this check.'); return }
     if (dc.trim() !== '' && !/^-?\d+$/.test(dc.trim())) {
       setError('DC must be a whole number from 1 to 100.')
       return
@@ -192,6 +216,7 @@ export default function Checks({ campaigns }: Props) {
         key: activeCheck.key,
         mode,
         situationalModifier: Number(situationalModifier.trim() || 0),
+        exhaustionPenalty,
         ...(dc.trim() === '' ? {} : { dc: Number(dc) }),
       })
       setLatest(resolved)
@@ -226,9 +251,12 @@ export default function Checks({ campaigns }: Props) {
                 <div><span>ABILITY</span><strong>{ABILITIES.find(({ key }) => key === activeCheck.ability)?.name} ({activeCheck.ability.toUpperCase()})</strong></div>
                 <div><span>ABILITY MODIFIER</span><strong>{signed(activeModifier)}</strong></div>
                 <div><span>PROFICIENCY</span><strong>{checkProficient ? `Proficient · ${signed(activeProficiency ?? 0)}` : 'Not proficient'}</strong></div>
-                <div className="check-summary-bonus"><span>CHECK BONUS</span><strong>{signed(calculatedBonus ?? 0)}</strong></div>
+                <div><span>EXHAUSTION</span><strong>{exhaustionLevel ? `Level ${exhaustionLevel} · ${signed(exhaustionPenalty)}` : 'None in selected encounter'}</strong></div>
+                <div className="check-summary-bonus"><span>TOTAL CHECK BONUS</span><strong>{signed((calculatedBonus ?? 0) + exhaustionPenalty)}</strong></div>
               </> : <span>Select a character to load saved ability scores and proficiencies.</span>}
             </div>
+
+            {exhaustionEffects.length > 0 && <label className="checks-field"><span>Active encounter Exhaustion</span><select value={exhaustionEncounterId} onChange={(event) => setExhaustionEncounterId(event.target.value)}><option value="">Choose encounter</option>{exhaustionEffects.map((effect) => <option key={effect.encounterId} value={effect.encounterId}>{effect.encounterName} · level {effect.level}</option>)}</select><small>Exhaustion applies −2 per level to this D20 Test.</small></label>}
 
             <div className="checks-input-row">
               <label className="checks-field"><span>Situational modifier <small>optional</small></span><input type="number" min="-100" max="100" step="1" value={situationalModifier} onChange={(event) => setSituationalModifier(event.target.value)} /></label>

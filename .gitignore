@@ -12,3 +12,7 @@ dist/
 
 # macOS
 .DS_Store
+
+# Locally generated macOS launcher bundles
+/RealmForge.app/
+/RealmForge Stop.app/

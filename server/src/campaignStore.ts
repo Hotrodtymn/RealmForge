@@ -27,6 +27,10 @@ namespace campaignStore {
     return listStatement.all() as unknown as Campaign[]
   }
 
+  export function getCampaign(campaignId: string): Campaign | undefined {
+    return database.prepare('SELECT id, name, description, setting, createdAt FROM campaigns WHERE id = ?').get(campaignId) as Campaign | undefined
+  }
+
   export function createCampaign(input: NewCampaign): Campaign {
     const campaign: Campaign = {
       id: crypto.randomUUID(),

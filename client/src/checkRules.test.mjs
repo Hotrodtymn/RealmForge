@@ -52,6 +52,14 @@ test('saving throws support zero situational modifier without changing character
   assert.deepEqual(character, before)
 })
 
+test('Exhaustion is applied once to ability checks and saving throws', () => {
+  const result = resolveCheck({ character, kind: 'saving_throw', key: 'con', mode: 'normal', situationalModifier: 1, exhaustionPenalty: -4 }, words(10))
+  assert.equal(result.total, 10, 'natural 11 + CON 2 + situational 1 - Exhaustion 4')
+  assert.equal(result.exhaustionPenalty, -4)
+  assert.match(result.breakdown, /Exhaustion \(-4\)/)
+  assert.throws(() => resolveCheck({ character, kind: 'skill', key: 'arcana', mode: 'normal', situationalModifier: 0, exhaustionPenalty: -3 }, words(1)), /increments of 2/)
+})
+
 test('advantage and disadvantage use the kept natural d20 result', () => {
   const advantage = resolveCheck({ character, kind: 'skill', key: 'arcana', mode: 'advantage', situationalModifier: 0 }, words(5, 16))
   assert.deepEqual(advantage.diceResults, [6, 17])
