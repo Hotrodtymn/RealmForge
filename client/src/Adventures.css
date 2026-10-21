@@ -184,6 +184,7 @@
 .overview-actions { display: grid; gap: 11px; padding-top: 13px; border-top: 1px solid rgba(224, 210, 174, .08); }
 .overview-actions .text-button { justify-self: start; }
 .worldbuilding-panel { display: grid; gap: 4px; }
+.worldbuilding-content-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
 .adventure-content-section { min-width: 0; padding: 18px 0; border-bottom: 1px solid rgba(224, 210, 174, .09); }
 .adventure-content-section:first-child { padding-top: 3px; }
 .adventure-content-section:last-child { border-bottom: 0; }
@@ -291,6 +292,20 @@
 .session-decision-history span { color: #ad9963; font-size: 10px; }
 .session-journal-section li { padding: 12px; }
 .session-journal-section li strong { font-size: 12px; }
+
+@media (min-width: 1400px) {
+  .worldbuilding-content-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px; }
+  .worldbuilding-content-grid > .adventure-content-section {
+    padding: 18px;
+    border: 1px solid rgba(224, 210, 174, .09);
+    border-radius: 5px;
+    background: rgba(8, 9, 7, .16);
+  }
+  .worldbuilding-content-grid .adventure-record-grid,
+  .worldbuilding-content-grid .story-state-grid { grid-template-columns: minmax(0, 1fr); }
+  .worldbuilding-content-grid .connection-controls { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .worldbuilding-content-grid .connection-controls > button { grid-column: 1 / -1; justify-self: start; }
+}
 
 @media (max-width: 1000px) {
   .adventure-layout { grid-template-columns: minmax(180px, 220px) minmax(0, 1fr); gap: 12px; }

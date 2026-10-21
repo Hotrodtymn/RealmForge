@@ -43,6 +43,7 @@
 .retry-button { padding: 3px 8px; margin-left: 3px; color: #d6c18e; border: 1px solid rgba(201,164,94,.3); border-radius: 3px; background: transparent; font-size: 10px; cursor: pointer; }
 .retry-button:hover { background: rgba(201,164,94,.1); }
 .content-wrap { width: min(1040px, 100%); margin: 0 auto; padding: 0 5.6%; }
+main.main-content > .content-wrap:has(> .adventures-page.worldbuilding-wide) { width: min(1600px, 100%); }
 .welcome-section { min-height: 252px; position: relative; display: flex; align-items: center; overflow: hidden; border-bottom: 1px solid var(--line); }
 .welcome-copy { position: relative; z-index: 2; max-width: 590px; padding: 36px 0 39px; }
 .eyebrow { display: flex; align-items: center; gap: 10px; color: #a59163; font-size: 9px; font-weight: 700; letter-spacing: .22em; }
